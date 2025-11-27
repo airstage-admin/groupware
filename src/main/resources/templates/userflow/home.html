@@ -9,12 +9,12 @@
 	<form th:action="@{/logout}" method="post" style="display:inline;">
 	  <button type="submit">ログアウト</button>
 	</form>
-	
+
 	<th:block th:if="${admin}">
 		<form th:action="@{/employee_list}" method="post" style="display:inline;">
 		  <button type="submit">社員管理</button>
 		</form>
-		
+
 		<form th:action="@{/attendance_employee_list}" method="post" style="display:inline;">
 		  <button type="submit">勤怠管理</button>
 		</form>
@@ -22,15 +22,22 @@
 		  <button type="submit">出力管理</button>
 		</form>
 	</th:block>
-	
+
 	<th:block th:if="!${admin}">
 		<form th:action="@{/employee_account_edit}" method="post" style="display:inline;">
 		  <button type="submit">アカウント管理</button>
 		</form>
-		
+
 		<form th:action="@{/attendance_calendar}" method="post" style="display:inline;">
 		  <button type="submit">勤怠管理</button>
 		</form>
+	</th:block>
+
+	<th:block>
+		<form style="display:inline;">
+		  <button>経費精算</button>
+		</form>
+
 	</th:block>
 </body>
 </html>
