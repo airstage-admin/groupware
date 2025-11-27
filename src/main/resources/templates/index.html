@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>社内グループウェア</title>
+</head>
+<body>
+	<h2>ログイン</h2>
+	
+	<form th:action="@{/login}" method="post">
+		<label for="loginid">ログインID：</label>
+		<input type="text" id="loginid" name="loginid" maxlength="50" required><br><br>
+		
+		<label for="password">パスワード：</label>
+		<input type="password" id="password" name="password" maxlength="100" required><br><br>
+		
+		<button type="submit">ログイン</button>
+	</form>
+	
+	<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+</body>
+</html>

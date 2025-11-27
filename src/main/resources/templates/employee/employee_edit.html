@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>社内グループウェア</title>
+</head>
+<body>
+	<h2 th:text="${userdto.id} == '0' ? 'アカウント新規作成' : 'アカウント更新'">アカウント新規作成</h2>
+	<input type="hidden" th:field="${userdto.id}" />
+	<form onkeydown="return event.key != 'Enter';" th:action="@{/employee_submit}" th:object="${userdto}" method="post" id="employeeForm">
+	    <input type="hidden" th:field="*{id}" />
+		<th:block th:if="${user.department} == '1'">
+			<label for="workingDay">部署：</label>
+			<select id="departmentCategory" name="departmentCategory">
+			    <option th:each="entry : ${departmentMap}"
+			            th:value="${entry.key}"
+			            th:text="${entry.value}"
+			            th:selected="${entry.key == selectedDepartmentCategory}"> 
+			    </option>
+			</select><br><br>
+			<label style="color:red;">*</label><label for="employeeNo">社員番号：</label>
+			<input type="text" id="employeeNo" name="employeeNo" th:field="*{employeeNo}" size="3" maxlength="3" required placeholder="000" />&ensp;&ensp;※社員番号は数字3桁で入力してください。<br>
+			<span th:if="${#fields.hasErrors('employeeNo')}" th:errors="*{employeeNo}" style="color:red;"></span><br>
+			<label style="color:red;">*</label><label for="hireDate">入社日：</label>
+			<input type="text" id="hireDate" name="hireDate" th:field="*{hireDate}" size="6" maxlength="10" required placeholder="2025/10/5" />&ensp;&ensp;※入社日は半角数字YYYY/MM/DD形式で入力してください。<br>
+			<span th:if="${#fields.hasErrors('hireDate')}" th:errors="*{hireDate}" style="color:red;"></span><br>
+			<label style="color:red;">*</label><label for="username">氏名：</label>
+			<input type="text" id="username" name="username" th:field="*{username}" size="60" maxlength="128" required  placeholder="山田　太郎（全角）"/>&ensp;&ensp;※氏名は全角で入力してください。<br>
+			<span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color:red;"></span><br>
+			<label style="color:red;">*</label><label for="mail">メールアドレス：</label>
+			<input type="text" id="mail" name="mail" th:field="*{mail}" size="60" maxlength="254" required  placeholder="例）example@airstage.co.jp" />&ensp;&ensp;※メールアドレスは半角英数字で記入してください。<br>
+			<span th:if="${#fields.hasErrors('mail')}" th:errors="*{mail}" style="color:red;"></span><br>
+		</th:block>
+		
+		<label style="color:red;">*</label><label for="loginid">ログインID：</label>
+		<input type="text" id="loginid" name="loginid" th:field="*{loginid}" size="30" maxlength="50" required  placeholder="ログインID" />&ensp;&ensp;※ログインIDは半角英数字と記号（._-!@）のみで入力してください。<br>
+		<span th:if="${#fields.hasErrors('loginid')}" th:errors="*{loginid}" style="color:red;"></span><br>
+		<label style="color:red;">*</label><label for="password">パスワード：</label>
+		<input type="text" id="password" name="password" th:field="*{password}" size="30" maxlength="128" required />&ensp;&ensp;※パスワードは半角英数字と記号（._-!@）のみで入力してください。<br>
+		<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red;"></span><br>
+		<th:block th:if="${user.department} == '1'">
+			<label for="workingDay">雇用区分：</label>
+			<select id="employeeType" name="employeeType">
+			    <option th:each="entry : ${employeeCategoryMap}"
+			            th:value="${entry.key}"
+			            th:text="${entry.value}"
+			            th:selected="${entry.key == selectedEmployeeCategory}"> 
+			    </option>
+			</select><br><br>
+			<button type="submit" name="action" value="cancel" formnovalidate>キャンセル</button>&ensp;&ensp;
+		</th:block>
+
+		<th:block th:if="${user.department} > '1'">
+		    <input type="hidden" id="departmentCategory" name="departmentCategory" th:value="${selectedDepartmentCategory}" />
+			<input type="hidden" id="employeeNo" name="employeeNo" th:value="${userdto.employeeNo}" />
+			<input type="hidden" id="hireDate" name="hireDate" th:value="${userdto.hireDate}" />
+			<input type="hidden" id="username" name="username" th:value="${userdto.username}" />
+			<input type="hidden" id="mail" name="mail" th:value="${userdto.mail}" />
+			<input type="hidden" id="employeeType" name="employeeType" th:value="${selectedEmployeeCategory}" />
+			<br><br>
+			<button type="submit" name="action" value="cancel" formnovalidate>キャンセル</button>&ensp;&ensp;
+		</th:block>
+		
+	    
+	    <button type="submit" name="action" value="update">更　新</button>
+	</form>
+
+    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+	<script th:src="@{/JavaScript/jquery.js}"></script>
+	<script th:src="@{/JavaScript/jquery.datetimepicker.full.js}"></script>
+	<script th:src="@{/JavaScript/editUtil.js}"></script>
+</body>
+</html>

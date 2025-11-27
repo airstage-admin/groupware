@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>社内グループウェア</title>
+</head>
+<body>
+	<h2>社内グループウェア</h2>
+	<form th:action="@{/logout}" method="post" style="display:inline;">
+	  <button type="submit">ログアウト</button>
+	</form>
+	
+	<th:block th:if="${admin}">
+		<form th:action="@{/employee_list}" method="post" style="display:inline;">
+		  <button type="submit">社員管理</button>
+		</form>
+		
+		<form th:action="@{/attendance_employee_list}" method="post" style="display:inline;">
+		  <button type="submit">勤怠管理</button>
+		</form>
+		<form th:action="@{/logout}" method="post" style="display:inline;">
+		  <button type="submit">出力管理</button>
+		</form>
+	</th:block>
+	
+	<th:block th:if="!${admin}">
+		<form th:action="@{/employee_account_edit}" method="post" style="display:inline;">
+		  <button type="submit">アカウント管理</button>
+		</form>
+		
+		<form th:action="@{/attendance_calendar}" method="post" style="display:inline;">
+		  <button type="submit">勤怠管理</button>
+		</form>
+	</th:block>
+</body>
+</html>

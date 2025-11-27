@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>社内グループウェア</title>
+</head>
+<body>
+  <div>
+	社員勤怠一覧&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+
+	<select id="departmentCategory" name="departmentCategory">
+	    <option th:each="entry : ${departmentMap}"
+	            th:value="${entry.key}"
+	            th:text="${entry.value}"
+	            th:selected="${entry.key == selectedDepartmentCategory}"> 
+	    </option>
+	</select><br><br>
+
+	<form th:action="@{/userflow/home}" method="get" style="display:inline;">
+	  <button type="submit">HOME</button>
+	</form>
+  </div>
+  </br>
+  <select id="month-year-select" name="yearMonth"onchange="saveSelection2()"></select>
+  <label for="placeCategory">の勤怠一覧</label>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+  </br></br>
+  <table border="1">
+    <thead>
+      <tr><th>社員番号</th><th>部署</th><th>氏名</th><th>ステータス</th><th>承認者</th><th>アクション</th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="att : ${userList}">
+		<input type="hidden" id="id" name="id" th:value="${att.id}" />
+        <td th:text="${att.employeeNo}">001</td>
+		<td th:text="${departmentMap[att.department]}">部署</td>
+  	    <td th:text="${att.username}">山田太郎</td>
+        <td th:text="${att.approval}">承認済</td>
+		<td th:text="${att.approvalName}">山田太郎</td>
+        <td>&ensp;&ensp;
+          <form th:action="@{/employee_attendance}" method="post" style="display:inline;">
+  		    <input type="hidden" name="id" th:value="${att.id}" />
+  		     <button type="submit">勤怠確認</button>
+  	      </form>&ensp;&ensp;
+        </td>
+      </tr>
+    </tbody>
+  </table>
+<script th:src="@{/JavaScript/attendance/attendanceDateList.js}"></script>
+<script th:src="@{/JavaScript/employee/employeeList.js}"></script>
+</body>
+</html>

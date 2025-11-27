@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>社内グループウェア</title>
+</head>
+<body>
+    <h2>勤怠更新</h2>
+
+    <!-- th:objectでattendanceをフォーム全体にバインド -->
+    <form onkeydown="return event.key != 'Enter';" th:action="@{/attendance_submit}" th:object="${attendance}" method="post" id="attendanceForm">
+        <input type="hidden" th:field="*{id}" />
+        <input type="hidden" th:field="*{userId}" />
+		<input type="hidden" id="placeWork" name="placeWork" th:value="${placeWork}" />
+		<label for="date"><span th:text="${placeWorkName}"></span></label>
+		<th:block th:if="${placeChk}">
+		    <input type="text" id="placeWorkName" name="placeWorkName" th:value="${attendance.placeWorkName}" size="50" maxlength="256" required />
+		</th:block>
+		</span><br>
+		<span th:if="${#fields.hasErrors('placeWorkName')}" th:errors="*{placeWorkName}" style="color:red;"></span><br>
+
+		<label for="workingDay">日付：</label>
+		<input type="text" id="workingDay" name="workingDay" th:field="*{workingDay}" readonly /><br><br>
+
+		<label style="color:red;">*</label><label for="clockIn">出勤時刻：</label>
+		<input type="text" id="clockIn" name="clockIn" th:field="*{clockIn}" size="4" maxlength="5" required />&ensp;&ensp;※00:00～31:59。<br>
+		<span th:if="${#fields.hasErrors('clockIn')}" th:errors="*{clockIn}" style="color:red;"></span><br>
+
+		<label style="color:red;">*</label><label for="clockOut">退勤時刻：</label>
+		<input type="text" id="clockOut" name="clockOut" th:field="*{clockOut}" size="4" maxlength="5" required />&ensp;&ensp;※00:00～31:59。早朝8時終了→31:00で記載してください。<br>
+		<span th:if="${#fields.hasErrors('clockOut')}" th:errors="*{clockOut}" style="color:red;"></span><br>
+
+		<label style="color:red;">*</label><label for="breakTime">休憩時間：</label>
+		<input type="text" id="breakTime" name="breakTime" th:field="*{breakTime}" size="4" maxlength="5" required />&ensp;&ensp;※00:00～10:00。15分単位<br>
+		<span th:if="${#fields.hasErrors('breakTime')}" th:errors="*{breakTime}" style="color:red;"></span><br>
+
+		<label style="color:red;">*</label><label for="nightBreakTime">深夜休憩時間：</label>
+		<input type="text" id="nightBreakTime" name="nightBreakTime" th:field="*{nightBreakTime}" maxlength="5" size="4" required　/>&ensp;&ensp;※00:00～10:00。15分単位。22：00～29：00の間は深夜休憩時間に記載してください。<br>
+		<span th:if="${#fields.hasErrors('nightBreakTime')}" th:errors="*{nightBreakTime}" style="color:red;"></span><br>
+
+		<label for="vacationCategory">勤怠/休暇区分：</label>
+		<select id="vacationCategory" name="vacationCategory">
+		    <option th:each="entry : ${vacationCategoryMap}"
+		            th:value="${entry.key}"
+		            th:text="${entry.value}"
+		            th:selected="${entry.key == selectedVacationCategory}"> 
+		    </option>
+		</select><br><br>
+		
+
+		<label for="vacationNote">備考：</label>
+		<input type="text" id="vacationNote" th:field="*{vacationNote}" size="50" maxlength="100" /><br><br>
+		<button type="submit" name="action" value="cancel" formnovalidate>キャンセル</button>&ensp;&ensp;
+		<button type="submit" name="action" value="update">更　新</button>
+    </form>
+
+    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+	
+	<script th:src="@{/JavaScript/jquery.js}"></script>
+	<script th:src="@{/JavaScript/jquery.datetimepicker.full.js}"></script>
+	<script th:src="@{/JavaScript/attendance/attendanceEdit.js}"></script>
+	<script th:src="@{/JavaScript/editUtil.js}"></script>
+</body>
+</html>

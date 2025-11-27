@@ -1,0 +1,13 @@
+.saturday {
+    color: blue; /* 土曜日を青字に */
+}
+.sunday {
+    color: red;  /* 日曜日を赤字に */
+}
+
+.holiday {
+    color: red;  /* 祝を赤字に */
+}
+.public {
+    color: red;  /* 公を赤字に */
+}

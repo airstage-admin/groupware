@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/css/attendanceList.css" type="text/css">
+  <title>社内グループウェア</title>
+</head>
+<body>
+  <div>
+	勤怠一覧&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+	<th:block th:if="${approval}">
+	  <form th:action="@{/attendance_approval}" method="post" style="display:inline;">
+		<input type="hidden" name="id" th:value="${user.id}" />
+	    <button type="submit">承　認</button>
+	  </form>&ensp;&ensp;
+	</th:block>
+	
+	<th:block th:if="!${admin}">
+	  <form th:action="@{/userflow/home}" method="get" style="display:inline;">
+	    <button type="submit">HOME</button>
+	  </form>
+	</th:block>
+	
+	<th:block th:if="${admin}">
+	  <form th:action="@{/attendance_employee_list}" method="post" style="display:inline;">
+	    <button type="submit">戻る</button>
+	  </form>
+	</th:block>
+  </div>
+  
+  <div>
+  <span th:text="'ようこそ、' + ${user.username} + ' さん'"></span>
+  
+  <div>
+  <input type="hidden" name="id" th:value="${user.id}" />
+  <select id="month-year-select" name="yearMonth"onchange="saveSelection()"></select>
+  <label for="placeCategory">の勤怠一覧</label>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+  <label for="placeCategory">勤務先：</label>
+  <select id="placeCategory" name="placeCategory"> 
+	<option th:each="entry : ${placeCategoryMap}"
+	        th:value="${entry.key}"
+	        th:text="${entry.value}"
+	        th:selected="${entry.key == selectedPlaceCategory}"> 
+	</option>
+  </select>
+  </div>
+  
+  </br></br>
+  <table border="1">
+    <thead>
+      <tr><th>日付</th><th>曜日</th><th>祝日</th><th>出勤時間</th><th>退勤時間</th><th>休憩時間</th><th>深夜休憩時間</th><th>休暇区分</th><th>備考</th><th>アクション</th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="att : ${attendanceList}">
+        <td th:text="${att.workingDay}">2025-08-01</td>
+		<td th:text="${T(com.groupware.common.constant.WeekCategory).ofCode(att.week)}"
+		    th:classappend="${T(com.groupware.common.constant.WeekCategory).ofCode(att.week) == '土'} ? 'saturday' : 
+		                   (${T(com.groupware.common.constant.WeekCategory).ofCode(att.week) == '日'} ? 'sunday' : '')">日</td>
+		<td th:text="${T(com.groupware.common.constant.HolidayCategory).ofCode(att.holiday)}"
+			th:classappend="${T(com.groupware.common.constant.HolidayCategory).ofCode(att.holiday) == '祝'} ? 'holiday' : 
+						   (${T(com.groupware.common.constant.HolidayCategory).ofCode(att.holiday) == '公'} ? 'public' : '')"></td>
+		<td th:text="${att.clockIn}">18:00</td>
+		<td th:text="${att.clockOut}">18:00</td>
+		<td th:text="${#temporals.format(att.breakTime, 'H:mm')}">01:00</td>
+		<td th:text="${#temporals.format(att.nightBreakTime, 'H:mm')}">01:00</td>
+		<td th:text="${vacationCategoryMap[att.vacationCategory]}"></td>
+        <td th:text="${att.vacationNote}"></td>
+        <td>
+          <form th:action="@{/attendance_edit}" method="post" style="display:inline;">
+			<input type="hidden" name="id" th:value="${att.id}" />
+			<button type="submit">勤怠入力</button>
+		  </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <script th:src="@{/JavaScript/attendance/attendanceDateList.js}"></script>
+  <script th:src="@{/JavaScript/attendance/placeWork.js}"></script>
+</body>
+</html>

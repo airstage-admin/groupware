@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>社内グループウェア</title>
+</head>
+  <div>
+	社員アカウント一覧&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+
+	<select id="departmentCategory" name="departmentCategory">
+	    <option th:each="entry : ${departmentMap}"
+	            th:value="${entry.key}"
+	            th:text="${entry.value}"
+	            th:selected="${entry.key == selectedDepartmentCategory}"> 
+	    </option>
+	</select><br><br>
+	<form th:action="@{/employee_create}" method="post" style="display:inline;">
+		<button type="submit">新規作成</button>
+	</form>&ensp;&ensp;
+	<form th:action="@{/userflow/home}" method="get" style="display:inline;">
+		<button type="submit">HOME</button>
+	</form>
+  </div>
+  </br></br>
+  <table border="1">
+    <thead>
+      <tr><th>社員番号</th><th>部署</th><th>氏名</th><th>メールアドレス</th><th>アクション</th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="att : ${userList}">
+        <td th:text="${att.employeeNo}">001</td>
+		<td th:text="${departmentMap[att.department]}">部署</td>
+  	    <td th:text="${att.username}">山田太郎</td>
+        <td th:text="${att.mail}">tarou.yamada@airstage.co.jp</td>
+        <td>&ensp;&ensp;
+		  <form th:action="@{/employee_edit}" method="post" style="display:inline;">
+		      <input type="hidden" name="id" th:value="${att.id}" />
+		      <button type="submit">アカウント更新</button>
+		  </form>&ensp;&ensp;
+		  <form th:action="@{/employee_stop}" method="post" style="display:inline;">
+		      <input type="hidden" name="id" th:value="${att.id}" />
+		      <button type="button" class="stopAccountButton">アカウント停止</button>
+		  </form>&ensp;&ensp;
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <script th:src="@{/JavaScript/employee/employeeList.js}"></script>
+</body>
+</html>
