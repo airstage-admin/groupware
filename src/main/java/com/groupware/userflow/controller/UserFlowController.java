@@ -17,7 +17,6 @@ import com.groupware.common.registry.DepartmentRegistry;
 import com.groupware.common.registry.EmployeeCategoryRegistry;
 import com.groupware.common.registry.PlaceCategoryRegistry;
 import com.groupware.common.registry.VacationCategoryRegistry;
-import com.groupware.common.util.ExcelUtiles;
 import com.groupware.dto.DepartmentTypeDto;
 import com.groupware.dto.EmployeeCategoryDto;
 import com.groupware.dto.PlaceCategoryDto;
@@ -116,8 +115,6 @@ public class UserFlowController {
 				// 勤務先区分マスター読込処理
 				List<PlaceCategoryDto> placeCategoryList = userFlowService.findByPlaceCategoryList();
 				PlaceCategoryRegistry.initialize(placeCategoryList);
-
-				ExcelUtiles.excelOutput();
 				
 				session.setAttribute("loginUser", user);
 				model.addAttribute("user", user);
