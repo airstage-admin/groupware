@@ -67,7 +67,7 @@ public class EmployeeController {
 			List<UserDto> list = employeeService.findByUsersList(departmenCode);
 
 			// 取得データをmodelにセット
-			model.addAttribute("selectedDepartmentCategory", Integer.parseInt(initialDlaceCategory));
+			model.addAttribute("selectedDepartmentCategory", departmenCode);
 			model.addAttribute("userList", list);
 		    model.addAttribute("departmentMap", DepartmentRegistry.departmentTypeSelectSet(true));
 		    

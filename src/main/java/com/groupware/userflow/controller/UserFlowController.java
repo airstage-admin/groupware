@@ -115,7 +115,7 @@ public class UserFlowController {
 				// 勤務先区分マスター読込処理
 				List<PlaceCategoryDto> placeCategoryList = userFlowService.findByPlaceCategoryList();
 				PlaceCategoryRegistry.initialize(placeCategoryList);
-
+				
 				session.setAttribute("loginUser", user);
 				model.addAttribute("user", user);
 				return "redirect:/userflow/home";
