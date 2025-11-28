@@ -142,7 +142,7 @@ public class AttendanceController {
 					.findByUsersApprovalList(getYearMonthCookieValue(monthYearCookieValue));
 
 			// 取得データをmodelにセット
-			model.addAttribute("selectedDepartmentCategory", Integer.parseInt(initialDlaceCategory));
+			model.addAttribute("selectedDepartmentCategory", departmenCode);
 			model.addAttribute("userList", list);
 			model.addAttribute("departmentMap", DepartmentRegistry.departmentTypeSelectSet(true));
 
