@@ -109,23 +109,6 @@
         </main>
     </div>
 
-    <script>
-	    document.addEventListener('DOMContentLoaded', function() {
-	        const rows = document.querySelectorAll('.clickable-row');
-
-	        rows.forEach(row => {
-	            row.addEventListener('click', function() {
-	                // データ属性からURLを取得
-	                const href = this.getAttribute('data-href');
-	                if (href) {
-	                    // ページ遷移
-	                    window.location.href = href;
-	                }
-	            });
-	        });
-	    });
-    </script>
-
     <style>
         /* ステータスバッジ追加スタイル */
         .status-badge {
