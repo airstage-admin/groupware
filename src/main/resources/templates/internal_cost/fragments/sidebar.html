@@ -11,69 +11,41 @@
                 <div class="nav-subtitle">経費精算システム</div>
             </div>
         </div>
-        
+
         <div class="nav-menu">
             <!-- メインメニュー -->
             <div class="nav-section">
                 <div class="nav-section-title">メインメニュー</div>
-                
+
                 <a class="nav-item" th:classappend="${currentPage == 'home'} ? 'active' : ''" th:href="@{/costs/list}">
                     <span class="nav-item-icon">🏠</span>
                     <span class="nav-item-text">ホーム</span>
                 </a>
-                
+
                 <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/new}">
                     <span class="nav-item-icon">➕</span>
-                    <span class="nav-item-text">経費申請</span>
+                    <span class="nav-item-text">新規申請</span>
                 </a>
-                
+
                 <a class="nav-item" th:classappend="${currentPage == 'list'} ? 'active' : ''" th:href="@{/costs/list}">
                     <span class="nav-item-icon">📋</span>
-                    <span class="nav-item-text">申請一覧</span>
+                    <span class="nav-item-text">承認状況</span>
+                    <span class="nav-item-badge">12</span>
                 </a>
             </div>
-            
-            <!-- 承認関連 -->
+
+            <!-- 過去の申請一覧 -->
             <div class="nav-section">
-                <div class="nav-section-title">承認</div>
-                
-                <a class="nav-item" th:classappend="${currentPage == 'approval'} ? 'active' : ''" th:href="@{/costs/approval}">
-                    <span class="nav-item-icon">✅</span>
-                    <span class="nav-item-text">承認待ち</span>
-                </a>
-                
+                <div class="nav-section-title">過去の申請</div>
+
                 <a class="nav-item" th:classappend="${currentPage == 'history'} ? 'active' : ''" th:href="@{/costs/history}">
-                    <span class="nav-item-icon">📜</span>
-                    <span class="nav-item-text">承認履歴</span>
-                </a>
-            </div>
-            
-            <!-- レポート -->
-            <div class="nav-section">
-                <div class="nav-section-title">レポート</div>
-                
-                <a class="nav-item" th:classappend="${currentPage == 'report'} ? 'active' : ''" th:href="@{/costs/report}">
-                    <span class="nav-item-icon">📊</span>
-                    <span class="nav-item-text">経費レポート</span>
-                </a>
-                
-                <a class="nav-item" th:classappend="${currentPage == 'export'} ? 'active' : ''" th:href="@{/costs/export}">
-                    <span class="nav-item-icon">📤</span>
-                    <span class="nav-item-text">データ出力</span>
-                </a>
-            </div>
-            
-            <!-- システム -->
-            <div class="nav-section">
-                <div class="nav-section-title">システム</div>
-                
-                <a class="nav-item" th:href="@{/userflow/home}">
-                    <span class="nav-item-icon">↩️</span>
-                    <span class="nav-item-text">マイページ</span>
+                    <span class="nav-item-icon">✅</span>
+                    <span class="nav-item-text">申請履歴</span>
+                    <span class="nav-item-badge">3</span>
                 </a>
             </div>
         </div>
-        
+
         <!-- ユーザー情報 -->
         <div class="nav-footer">
             <div class="nav-user">
@@ -87,4 +59,3 @@
     </nav>
 </body>
 </html>
-

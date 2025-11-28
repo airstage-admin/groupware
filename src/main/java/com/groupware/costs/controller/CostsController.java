@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 //import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestParam;
 //import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.groupware.dto.UserDto;
@@ -62,18 +62,18 @@ public class CostsController {
 	* @param model モデル
 	* @return 詳細画面
 	*/
-	@GetMapping("/costs/detail/{id}")
-	public String getCostDetail(@PathVariable("id") String id, HttpSession session, Model model) {
+	@GetMapping("/costs/detail")
+	public String getCostDetail(HttpSession session, Model model) {
 		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
 		if (loginUser == null) {
 			return "redirect:/index";
 		}
 		model.addAttribute("user", loginUser);
 		model.addAttribute("currentPage", "detail");
-		
+
 		// TODO: 実際のデータはDBから取得する
 		// 仮データをセット
-		model.addAttribute("costId", id);
+		model.addAttribute("costId", "id");
 		model.addAttribute("status", "rejected"); // pending, approved, rejected
 		model.addAttribute("rejectReason", "経費として認められないため。");
 		model.addAttribute("accountTitle", "旅費交通費");
@@ -81,7 +81,7 @@ public class CostsController {
 		model.addAttribute("amount", "620");
 		model.addAttribute("purpose", "〇〇〇会社出勤時の地下鉄代（高田馬場～六本木一丁目駅）");
 		model.addAttribute("purchaseDate", "2025/11/14");
-		
+
 		return "internal_cost/internal_cost_detail";
 	}
 }

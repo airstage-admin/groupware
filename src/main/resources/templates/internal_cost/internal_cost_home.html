@@ -71,7 +71,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:href="@{/costs/detail/{:id}"}>
+                        <tr class="clickable-row" th:data-href="@{/costs/detail}">
                             <td>2025/11/28</td>
                             <td>FY2511170A04</td>
                             <td>交通費</td>
@@ -79,7 +79,7 @@
                             <td>2025/11/25</td>
                             <td><span class="status-badge pending">承認待ち</span></td>
                         </tr>
-                        <tr>
+                        <tr class="clickable-row" th:data-href="@{/costs/detail}">
                             <td>2025/11/26</td>
                             <td>FY2511170A03</td>
                             <td>交際費</td>
@@ -87,17 +87,17 @@
                             <td>2025/11/19</td>
                             <td><span class="status-badge approved">承認済み</span></td>
                         </tr>
-                        <tr>
+                        <tr class="clickable-row" th:data-href="@{/costs/detail}">
                             <td>2025/11/18</td>
-                             <td>FY2511170A02</td>
+                            <td>FY2511170A02</td>
                             <td>消耗品費</td>
                             <td>¥7,200</td>
                             <td>2025/11/15</td>
                             <td><span class="status-badge rejected">差し戻し</span></td>
                         </tr>
-                        <tr>
+                        <tr class="clickable-row" th:data-href="@{/costs/detail}">
                             <td>2025/11/08</td>
-                             <td>FY2511170A01</td>
+                            <td>FY2511170A01</td>
                             <td>交通費（定期代）</td>
                             <td>¥14,160</td>
                             <td>2025/11/01</td>
@@ -108,6 +108,23 @@
             </div>
         </main>
     </div>
+
+    <script>
+	    document.addEventListener('DOMContentLoaded', function() {
+	        const rows = document.querySelectorAll('.clickable-row');
+
+	        rows.forEach(row => {
+	            row.addEventListener('click', function() {
+	                // データ属性からURLを取得
+	                const href = this.getAttribute('data-href');
+	                if (href) {
+	                    // ページ遷移
+	                    window.location.href = href;
+	                }
+	            });
+	        });
+	    });
+    </script>
 
     <style>
         /* ステータスバッジ追加スタイル */
@@ -169,7 +186,32 @@
             font-weight: 500;
             color: #2D3436;
         }
+
+        /* クリック可能な行 */
+        .clickable-row {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .clickable-row:hover {
+            background-color: #EBF5FF;
+        }
     </style>
+
+    <script>
+        // クリック可能な行の処理
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.clickable-row');
+            rows.forEach(function(row) {
+                row.addEventListener('click', function() {
+                    const href = this.getAttribute('data-href');
+                    if (href) {
+                        window.location.href = href;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
 
