@@ -17,83 +17,58 @@
                     <div class="nav-subtitle">経費精算システム</div>
                 </div>
             </div>
-            
+
             <div class="nav-menu">
                 <!-- メインメニュー -->
                 <div class="nav-section">
                     <div class="nav-section-title">メインメニュー</div>
-                    
+
                     <a class="nav-item active" th:href="@{/internal_cost}">
                         <span class="nav-item-icon">🏠</span>
                         <span class="nav-item-text">ホーム</span>
                     </a>
-                    
+
                     <a class="nav-item" th:href="@{/internal_cost/new}">
                         <span class="nav-item-icon">➕</span>
                         <span class="nav-item-text">新規申請</span>
                     </a>
-                    
+
                     <a class="nav-item" th:href="@{/internal_cost/list}">
                         <span class="nav-item-icon">📋</span>
                         <span class="nav-item-text">申請一覧</span>
                         <span class="nav-item-badge">12</span>
                     </a>
                 </div>
-                
+
                 <!-- 承認関連 -->
                 <div class="nav-section">
                     <div class="nav-section-title">承認</div>
-                    
+
                     <a class="nav-item" th:href="@{/internal_cost/approval}">
                         <span class="nav-item-icon">✅</span>
                         <span class="nav-item-text">承認待ち</span>
                         <span class="nav-item-badge">3</span>
                     </a>
-                    
+
                     <a class="nav-item" th:href="@{/internal_cost/history}">
                         <span class="nav-item-icon">📜</span>
                         <span class="nav-item-text">承認履歴</span>
                     </a>
                 </div>
-                
-                <!-- レポート -->
-                <div class="nav-section">
-                    <div class="nav-section-title">レポート</div>
-                    
-                    <a class="nav-item" th:href="@{/internal_cost/report}">
-                        <span class="nav-item-icon">📊</span>
-                        <span class="nav-item-text">経費レポート</span>
-                    </a>
-                    
-                    <a class="nav-item" th:href="@{/internal_cost/export}">
-                        <span class="nav-item-icon">📤</span>
-                        <span class="nav-item-text">データ出力</span>
-                    </a>
-                </div>
-                
-                <!-- システム -->
-                <div class="nav-section">
-                    <div class="nav-section-title">システム</div>
-                    
-                    <a class="nav-item" th:href="@{/home}">
-                        <span class="nav-item-icon">↩️</span>
-                        <span class="nav-item-text">メインメニューへ</span>
-                    </a>
-                </div>
             </div>
-            
+
             <!-- ユーザー情報 -->
             <div class="nav-footer">
                 <div class="nav-user">
-                    <div class="nav-user-avatar" th:text="${#strings.substring(userName != null ? userName : 'U', 0, 1)}">U</div>
+                    <div class="nav-user-avatar" th:text="${user.username != null ? #strings.substring(user.username, 0, 1) : 'U'}">U</div>
                     <div class="nav-user-info">
-                        <div class="nav-user-name" th:text="${userName != null ? userName : 'ユーザー'}">ユーザー名</div>
-                        <div class="nav-user-role" th:text="${userRole != null ? userRole : '一般'}">一般</div>
+                        <div class="nav-user-name" th:text="${user.username != null ? user.username : 'ユーザー'}">ユーザー名</div>
+                        <div class="nav-user-role">一般</div>
                     </div>
                 </div>
             </div>
         </nav>
-        
+
         <!-- メインコンテンツ -->
         <main class="main-content">
             <!-- ページヘッダー -->
@@ -105,7 +80,7 @@
                     <span>経費精算</span>
                 </div>
             </div>
-            
+
             <!-- 統計カード -->
             <div class="dashboard-grid">
                 <div class="stat-card">
@@ -119,7 +94,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-icon green">✓</div>
                     <div class="stat-content">
@@ -131,7 +106,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-icon orange">⏳</div>
                     <div class="stat-content">
@@ -143,7 +118,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-icon red">✗</div>
                     <div class="stat-content">
@@ -156,7 +131,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- 最近の申請 -->
             <div class="content-card">
                 <div class="card-header">
@@ -166,7 +141,7 @@
                         <button class="btn btn-primary">新規申請</button>
                     </div>
                 </div>
-                
+
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -214,13 +189,13 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- クイックアクション -->
             <div class="content-card">
                 <div class="card-header">
                     <h2 class="card-title">クイックアクション</h2>
                 </div>
-                
+
                 <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                     <a href="#" class="quick-action-card" th:href="@{/internal_cost/new?type=transport}">
                         <div class="quick-action-icon">🚃</div>
@@ -242,7 +217,7 @@
             </div>
         </main>
     </div>
-    
+
     <style>
         /* ステータスバッジ追加スタイル */
         .status-badge {
@@ -252,27 +227,27 @@
             font-size: 12px;
             font-weight: 600;
         }
-        
+
         .status-badge.pending {
             background: #FEF3C7;
             color: #92400E;
         }
-        
+
         .status-badge.approved {
             background: #D1FAE5;
             color: #065F46;
         }
-        
+
         .status-badge.rejected {
             background: #FEE2E2;
             color: #991B1B;
         }
-        
+
         .btn-sm {
             padding: 6px 12px;
             font-size: 12px;
         }
-        
+
         /* クイックアクションカード */
         .quick-action-card {
             display: flex;
@@ -286,18 +261,18 @@
             transition: all 0.2s ease;
             border: 2px solid transparent;
         }
-        
+
         .quick-action-card:hover {
             background: #EEF2F7;
             border-color: #74B9FF;
             transform: translateY(-2px);
         }
-        
+
         .quick-action-icon {
             font-size: 32px;
             margin-bottom: 12px;
         }
-        
+
         .quick-action-label {
             font-size: 14px;
             font-weight: 500;
