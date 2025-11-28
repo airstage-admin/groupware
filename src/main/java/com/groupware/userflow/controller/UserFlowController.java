@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.groupware.batch.service.BatchService;
 import com.groupware.common.registry.DepartmentRegistry;
 import com.groupware.common.registry.EmployeeCategoryRegistry;
 import com.groupware.common.registry.PlaceCategoryRegistry;
@@ -39,9 +38,6 @@ public class UserFlowController {
 
 	@Autowired
 	private UserFlowService userFlowService;
-
-	@Autowired
-	private BatchService reportService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserFlowController.class);
 
@@ -119,7 +115,7 @@ public class UserFlowController {
 				// 勤務先区分マスター読込処理
 				List<PlaceCategoryDto> placeCategoryList = userFlowService.findByPlaceCategoryList();
 				PlaceCategoryRegistry.initialize(placeCategoryList);
-
+				
 				session.setAttribute("loginUser", user);
 				model.addAttribute("user", user);
 				return "redirect:/userflow/home";
