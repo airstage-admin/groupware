@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>経費精算詳細 - 社内グループウェア</title>
+    <link rel="stylesheet" th:href="@{/css/internal_cost/internal_cost.css}">
+    <style>
+        /* 詳細画面用追加スタイル */
+        .detail-container {
+            background: var(--bg-content);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 32px;
+        }
+        
+        .detail-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #EEF2F7;
+        }
+        
+        .detail-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        /* 差し戻しアラート */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .alert-danger {
+            background: #FEE2E2;
+            border-left: 4px solid #DC2626;
+        }
+        
+        .alert-warning {
+            background: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+        }
+        
+        .alert-success {
+            background: #D1FAE5;
+            border-left: 4px solid #10B981;
+        }
+        
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            color: #991B1B;
+            margin-bottom: 4px;
+        }
+        
+        .alert-danger .alert-title {
+            color: #991B1B;
+        }
+        
+        .alert-warning .alert-title {
+            color: #92400E;
+        }
+        
+        .alert-success .alert-title {
+            color: #065F46;
+        }
+        
+        .alert-message {
+            font-size: 14px;
+            color: #B91C1C;
+        }
+        
+        .alert-danger .alert-message {
+            color: #B91C1C;
+        }
+        
+        .alert-warning .alert-message {
+            color: #B45309;
+        }
+        
+        .alert-success .alert-message {
+            color: #047857;
+        }
+        
+        /* 詳細テーブル */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .detail-table tr {
+            border-bottom: 1px solid #EEF2F7;
+        }
+        
+        .detail-table tr:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-table th {
+            text-align: left;
+            padding: 14px 16px;
+            width: 160px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+            background: #F8FAFC;
+            vertical-align: top;
+        }
+        
+        .detail-table td {
+            padding: 14px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        /* ステータスバッジ */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-badge.pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .status-badge.approved {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .status-badge.rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        
+        /* フッターアクション */
+        .detail-footer {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #EEF2F7;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #0052D4, #4364F7);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.35);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #EEF2F7;
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: #E2E8F0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ナビゲーションサイドバー（共通フラグメント） -->
+        <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
+        
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <!-- 詳細コンテナ -->
+            <div class="detail-container">
+                <div class="detail-header">
+                    <h1 class="detail-title">経費精算詳細画面</h1>
+                </div>
+                
+                <!-- 差し戻しアラート（statusがrejectedの場合のみ表示） -->
+                <div class="alert alert-danger" th:if="${status == 'rejected'}">
+                    <span class="alert-icon">❗</span>
+                    <div class="alert-content">
+                        <div class="alert-title">申請が差し戻しされました</div>
+                        <div class="alert-message" th:text="'・理由：' + ${rejectReason != null ? rejectReason : '経費として認められないため。'}">・理由：経費として認められないため。</div>
+                    </div>
+                </div>
+                
+                <!-- 承認済みアラート -->
+                <div class="alert alert-success" th:if="${status == 'approved'}">
+                    <span class="alert-icon">✅</span>
+                    <div class="alert-content">
+                        <div class="alert-title">申請が承認されました</div>
+                    </div>
+                </div>
+                
+                <!-- 審査中アラート -->
+                <div class="alert alert-warning" th:if="${status == 'pending'}">
+                    <span class="alert-icon">⏳</span>
+                    <div class="alert-content">
+                        <div class="alert-title">申請は審査中です</div>
+                    </div>
+                </div>
+                
+                <!-- 詳細情報テーブル -->
+                <table class="detail-table">
+                    <tr>
+                        <th>ID</th>
+                        <td th:text="${costId != null ? costId : 'FY2512170A01'}">FY2512170A01</td>
+                    </tr>
+                    <tr>
+                        <th>勘定科目</th>
+                        <td th:text="${accountTitle != null ? accountTitle : '旅費交通費'}">旅費交通費</td>
+                    </tr>
+                    <tr>
+                        <th>サブカテゴリ</th>
+                        <td th:text="${subCategory != null ? subCategory : '常駐先の会社に対する交通費（クライアント承認済）'}">常駐先の会社に対する交通費（クライアント承認済）</td>
+                    </tr>
+                    <tr>
+                        <th>金額</th>
+                        <td th:text="${amount != null ? amount : '620'}">620</td>
+                    </tr>
+                    <tr>
+                        <th>用途</th>
+                        <td th:text="${purpose != null ? purpose : '〇〇〇会社出勤時の地下鉄代（高田馬場～六本木一丁目駅）'}">〇〇〇会社出勤時の地下鉄代（高田馬場～六本木一丁目駅）</td>
+                    </tr>
+                    <tr>
+                        <th>購入日</th>
+                        <td th:text="${purchaseDate != null ? purchaseDate : '2025/11/14'}">2025/11/14</td>
+                    </tr>
+                </table>
+                
+                <!-- フッターアクション -->
+                <div class="detail-footer">
+                    <a class="btn btn-primary" th:href="@{/costs/list}">一覧へ戻る</a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

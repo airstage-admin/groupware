@@ -1,0 +1,247 @@
+ /* ステータスバッジ追加スタイル */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-badge.pending {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.status-badge.approved {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.status-badge.rejected {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* クイックアクションカード */
+.quick-action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: #F8FAFC;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.quick-action-card:hover {
+    background: #EEF2F7;
+    border-color: #74B9FF;
+    transform: translateY(-2px);
+}
+
+.quick-action-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.quick-action-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2D3436;
+}
+
+/* 詳細画面用追加スタイル */
+.detail-container {
+    background: var(--bg-content);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    padding: 32px;
+}
+
+.detail-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #EEF2F7;
+}
+
+.detail-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* 差し戻しアラート */
+.alert {
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.alert-danger {
+    background: #FEE2E2;
+    border-left: 4px solid #DC2626;
+}
+
+.alert-warning {
+    background: #FEF3C7;
+    border-left: 4px solid #F59E0B;
+}
+
+.alert-success {
+    background: #D1FAE5;
+    border-left: 4px solid #10B981;
+}
+
+.alert-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-title {
+    font-weight: 600;
+    color: #991B1B;
+    margin-bottom: 4px;
+}
+
+.alert-danger .alert-title {
+    color: #991B1B;
+}
+
+.alert-warning .alert-title {
+    color: #92400E;
+}
+
+.alert-success .alert-title {
+    color: #065F46;
+}
+
+.alert-message {
+    font-size: 14px;
+    color: #B91C1C;
+}
+
+.alert-danger .alert-message {
+    color: #B91C1C;
+}
+
+.alert-warning .alert-message {
+    color: #B45309;
+}
+
+.alert-success .alert-message {
+    color: #047857;
+}
+
+/* 詳細テーブル */
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.detail-table tr {
+    border-bottom: 1px solid #EEF2F7;
+}
+
+.detail-table tr:last-child {
+    border-bottom: none;
+}
+
+.detail-table th {
+    text-align: left;
+    padding: 14px 16px;
+    width: 160px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 14px;
+    background: #F8FAFC;
+    vertical-align: top;
+}
+
+.detail-table td {
+    padding: 14px 16px;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+/* ステータスバッジ */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-badge.pending {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.status-badge.approved {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.status-badge.rejected {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+/* フッターアクション */
+.detail-footer {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #EEF2F7;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0052D4, #4364F7);
+    color: white;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 4px 16px rgba(0, 82, 212, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #EEF2F7;
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background: #E2E8F0;
+}
