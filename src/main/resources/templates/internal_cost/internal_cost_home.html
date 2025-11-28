@@ -8,61 +8,8 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- ナビゲーションサイドバー -->
-        <nav class="nav-sidebar">
-            <div class="nav-header">
-                <div class="nav-logo">💼</div>
-                <div>
-                    <div class="nav-title">グループウェア</div>
-                    <div class="nav-subtitle">経費精算システム</div>
-                </div>
-            </div>
-
-            <div class="nav-menu">
-                <!-- メインメニュー -->
-                <div class="nav-section">
-                    <div class="nav-section-title">メインメニュー</div>
-
-                    <a class="nav-item active" th:href="@{/internal_cost}">
-                        <span class="nav-item-icon">🏠</span>
-                        <span class="nav-item-text">ホーム</span>
-                    </a>
-
-                    <a class="nav-item" th:href="@{/internal_cost/new}">
-                        <span class="nav-item-icon">➕</span>
-                        <span class="nav-item-text">新規申請</span>
-                    </a>
-
-                    <a class="nav-item" th:href="@{/internal_cost/list}">
-                        <span class="nav-item-icon">📋</span>
-                        <span class="nav-item-text">承認状況</span>
-                        <span class="nav-item-badge">12</span>
-                    </a>
-                </div>
-
-                <!-- 過去の申請一覧 -->
-                <div class="nav-section">
-                    <div class="nav-section-title">過去の申請</div>
-
-                    <a class="nav-item" th:href="@{/internal_cost/approval}">
-                        <span class="nav-item-icon">✅</span>
-                        <span class="nav-item-text">申請履歴</span>
-                        <span class="nav-item-badge">3</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- ユーザー情報 -->
-            <div class="nav-footer">
-                <div class="nav-user">
-                    <div class="nav-user-avatar" th:text="${user.username != null ? #strings.substring(user.username, 0, 1) : 'U'}">U</div>
-                    <div class="nav-user-info">
-                        <div class="nav-user-name" th:text="${user.username != null ? user.username : 'ユーザー'}">ユーザー名</div>
-                        <div class="nav-user-role">一般</div>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        <!-- ナビゲーションサイドバー（共通フラグメント） -->
+        <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
 
         <!-- メインコンテンツ -->
         <main class="main-content">

@@ -50,6 +50,7 @@ public class CostsController {
 			return "redirect:/index";
 		}
 		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "home");
 		return "internal_cost/internal_cost_home";
 	}
 
@@ -68,6 +69,7 @@ public class CostsController {
 			return "redirect:/index";
 		}
 		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "detail");
 		
 		// TODO: 実際のデータはDBから取得する
 		// 仮データをセット

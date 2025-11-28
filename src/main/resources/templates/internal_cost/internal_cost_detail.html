@@ -197,54 +197,8 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- ナビゲーションサイドバー -->
-        <nav class="nav-sidebar">
-            <div class="nav-header">
-                <div class="nav-logo">💼</div>
-                <div>
-                    <div class="nav-title">グループウェア</div>
-                    <div class="nav-subtitle">経費精算システム</div>
-                </div>
-            </div>
-            
-            <div class="nav-menu">
-                <!-- メインメニュー -->
-                <div class="nav-section">
-                    <div class="nav-section-title">メインメニュー</div>
-                    
-                    <a class="nav-item" th:href="@{/costs/list}">
-                        <span class="nav-item-icon">📋</span>
-                        <span class="nav-item-text">経費一覧</span>
-                    </a>
-                    
-                    <a class="nav-item" th:href="@{/costs/new}">
-                        <span class="nav-item-icon">➕</span>
-                        <span class="nav-item-text">経費申請</span>
-                    </a>
-                </div>
-                
-                <!-- システム -->
-                <div class="nav-section">
-                    <div class="nav-section-title">システム</div>
-                    
-                    <a class="nav-item" th:href="@{/userflow/home}">
-                        <span class="nav-item-icon">↩️</span>
-                        <span class="nav-item-text">マイページ</span>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- ユーザー情報 -->
-            <div class="nav-footer">
-                <div class="nav-user">
-                    <div class="nav-user-avatar" th:text="${user.username != null ? #strings.substring(user.username, 0, 1) : 'U'}">U</div>
-                    <div class="nav-user-info">
-                        <div class="nav-user-name" th:text="${user.username != null ? user.username : 'ユーザー'}">ユーザー名</div>
-                        <div class="nav-user-role">一般</div>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        <!-- ナビゲーションサイドバー（共通フラグメント） -->
+        <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
         
         <!-- メインコンテンツ -->
         <main class="main-content">
