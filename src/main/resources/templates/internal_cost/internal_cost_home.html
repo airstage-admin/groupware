@@ -81,6 +81,32 @@
                 <h1 class="page-title">経費精算ダッシュボード</h1>
             </div>
 
+            <!-- クイックアクション -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h2 class="card-title">クイックアクション</h2>
+                </div>
+
+                <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <a href="#" class="quick-action-card" th:href="@{/internal_cost/new?type=transport}">
+                        <div class="quick-action-icon">🚃</div>
+                        <div class="quick-action-label">交通費申請</div>
+                    </a>
+                    <a href="#" class="quick-action-card" th:href="@{/internal_cost/new?type=meeting}">
+                        <div class="quick-action-icon">☕</div>
+                        <div class="quick-action-label">会議費申請</div>
+                    </a>
+                    <a href="#" class="quick-action-card" th:href="@{/internal_cost/new?type=supplies}">
+                        <div class="quick-action-icon">📦</div>
+                        <div class="quick-action-label">消耗品申請</div>
+                    </a>
+                    <a href="#" class="quick-action-card" th:href="@{/internal_cost/new?type=other}">
+                        <div class="quick-action-icon">📝</div>
+                        <div class="quick-action-label">その他申請</div>
+                    </a>
+                </div>
+            </div>
+
             <!-- 最近の申請 -->
             <div class="content-card">
                 <div class="card-header">
@@ -137,32 +163,6 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-
-            <!-- クイックアクション -->
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title">クイックアクション</h2>
-                </div>
-
-                <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                    <a href="#" class="quick-action-card" th:href="@{/internal_cost/new?type=transport}">
-                        <div class="quick-action-icon">🚃</div>
-                        <div class="quick-action-label">交通費申請</div>
-                    </a>
-                    <a href="#" class="quick-action-card" th:href="@{/internal_cost/new?type=meeting}">
-                        <div class="quick-action-icon">☕</div>
-                        <div class="quick-action-label">会議費申請</div>
-                    </a>
-                    <a href="#" class="quick-action-card" th:href="@{/internal_cost/new?type=supplies}">
-                        <div class="quick-action-icon">📦</div>
-                        <div class="quick-action-label">消耗品申請</div>
-                    </a>
-                    <a href="#" class="quick-action-card" th:href="@{/internal_cost/new?type=other}">
-                        <div class="quick-action-icon">📝</div>
-                        <div class="quick-action-label">その他申請</div>
-                    </a>
-                </div>
             </div>
         </main>
     </div>
