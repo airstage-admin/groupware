@@ -84,4 +84,22 @@ public class CostsController {
 
 		return "internal_cost/internal_cost_detail";
 	}
+
+	/**
+	* 経費精算申請画面表示処理（GET用）
+	*
+	* @param session セッション
+	* @param model モデル
+	* @return 申請画面
+	*/
+	@GetMapping("/costs/new")
+	public String getCostCreate(HttpSession session, Model model) {
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
+		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "new");
+		return "internal_cost/internal_cost_create";
+	}
 }

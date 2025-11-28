@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>経費精算申請 - 社内グループウェア</title>
+    <link rel="stylesheet" th:href="@{/css/internal_cost/internal_cost.css}">
+    <style>
+        /* 申請画面用スタイル */
+        .create-container {
+            background: var(--bg-content);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 32px;
+            max-width: 800px;
+        }
+
+        .create-header {
+            margin-bottom: 24px;
+        }
+
+        .create-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        /* ステップインジケーター */
+        .step-indicator {
+            display: flex;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .step-item {
+            flex: 1;
+            padding: 16px 12px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s ease;
+        }
+
+        .step-item.active {
+            color: #0052D4;
+            border-bottom-color: #0052D4;
+            font-weight: 600;
+        }
+
+        .step-item.completed {
+            color: #10B981;
+        }
+
+        /* ステップコンテンツ */
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        /* 勘定科目選択 */
+        .category-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border: 2px solid #EEF2F7;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .category-item:hover {
+            border-color: #74B9FF;
+            background: #F8FAFC;
+        }
+
+        .category-item.selected {
+            border-color: #0052D4;
+            background: #EBF5FF;
+        }
+
+        .category-item.selected::after {
+            content: "✓";
+            color: #0052D4;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .category-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .category-description {
+            padding: 16px 20px;
+            background: #F8FAFC;
+            border-radius: 10px;
+            margin-bottom: 24px;
+        }
+
+        .category-description-title {
+            font-weight: 600;
+            color: #0052D4;
+            margin-bottom: 4px;
+        }
+
+        .category-description-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* フォーム */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: " *";
+            color: #E17055;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #0052D4;
+            box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.1);
+        }
+
+        .form-input:read-only {
+            background: #F8FAFC;
+            color: var(--text-secondary);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* 提出先選択 */
+        .submit-description {
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        /* フッター */
+        .create-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #EEF2F7;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0052D4, #4364F7);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #EEF2F7;
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #E2E8F0;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #EEF2F7;
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            border-color: #CBD5E1;
+            background: #F8FAFC;
+        }
+
+        /* モーダル（勘定科目選択用） */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #EEF2F7;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ナビゲーションサイドバー（共通フラグメント） -->
+        <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="create-container">
+                <div class="create-header">
+                    <h1 class="create-title">経費精算申請画面</h1>
+                </div>
+
+                <!-- ステップインジケーター -->
+                <div class="step-indicator">
+                    <div class="step-item active" data-step="1">① 勘定科目を選択する</div>
+                    <div class="step-item" data-step="2">② 項目を入力する</div>
+                    <div class="step-item" data-step="3">③ 提出先を選択する</div>
+                </div>
+
+                <!-- ステップ1: 勘定科目選択 -->
+                <div class="step-content active" id="step1">
+                    <div class="category-label">選択してください</div>
+                    <div class="category-list">
+                        <div class="category-item" data-category="travel" data-name="旅費交通費">
+                            <span class="category-name">旅費交通費</span>
+                        </div>
+                        <div class="category-item" data-category="communication" data-name="通信費">
+                            <span class="category-name">通信費</span>
+                        </div>
+                        <div class="category-item" data-category="supplies" data-name="消耗品費">
+                            <span class="category-name">消耗品費</span>
+                        </div>
+                        <div class="category-item" data-category="meeting" data-name="会議費">
+                            <span class="category-name">会議費</span>
+                        </div>
+                        <div class="category-item" data-category="entertainment" data-name="接待交際費">
+                            <span class="category-name">接待交際費</span>
+                        </div>
+                    </div>
+
+                    <div class="category-description" id="categoryDescription" style="display: none;">
+                        <div class="category-description-title" id="descriptionTitle">旅費交通費</div>
+                        <div class="category-description-text" id="descriptionText">従業員が業務のために通常の勤務地を離れて移動する際に発生する、電車・バス・タクシー代、宿泊費、出張手当などの費用を指します。</div>
+                    </div>
+
+                    <div class="create-footer">
+                        <a class="btn btn-outline" th:href="@{/costs/list}">キャンセル</a>
+                        <button class="btn btn-primary" id="nextToStep2" disabled>次へ</button>
+                    </div>
+                </div>
+
+                <!-- ステップ2: 項目入力 -->
+                <div class="step-content" id="step2">
+                    <form id="costForm">
+                        <div class="form-group">
+                            <label class="form-label">識別用番号</label>
+                            <input type="text" class="form-input" id="costId" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">勘定科目</label>
+                            <input type="text" class="form-input" id="selectedCategory" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">サブカテゴリ</label>
+                            <select class="form-select" id="subCategory" required>
+                                <option value="">選択してください</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label required">金額</label>
+                                <input type="number" class="form-input" id="amount" placeholder="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required">支払日</label>
+                                <input type="date" class="form-input" id="paymentDate" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">使用用途</label>
+                            <textarea class="form-textarea" id="purpose" placeholder="経費の使用用途を入力してください" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">URL</label>
+                            <input type="url" class="form-input" id="url" placeholder="https://...">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">プロジェクト</label>
+                            <select class="form-select" id="project">
+                                <option value="">選択してください</option>
+                                <option value="project1">プロジェクトA</option>
+                                <option value="project2">プロジェクトB</option>
+                                <option value="project3">プロジェクトC</option>
+                            </select>
+                        </div>
+                    </form>
+
+                    <div class="create-footer">
+                        <button class="btn btn-outline" id="backToStep1">戻る</button>
+                        <button class="btn btn-primary" id="nextToStep3">次へ</button>
+                    </div>
+                </div>
+
+                <!-- ステップ3: 提出先選択 -->
+                <div class="step-content" id="step3">
+                    <div class="submit-description">提出する社員を選択してください。</div>
+
+                    <div class="form-group">
+                        <select class="form-select" id="approver" required>
+                            <option value="">選択してください</option>
+                            <option value="130">130　上長</option>
+                            <option value="131">131　部長</option>
+                            <option value="132">132　課長</option>
+                        </select>
+                    </div>
+
+                    <div class="create-footer">
+                        <button class="btn btn-outline" id="backToStep2">戻る</button>
+                        <button class="btn btn-primary" id="submitBtn">申請する</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 勘定科目の説明データ
+        const categoryDescriptions = {
+            travel: {
+                name: '旅費交通費',
+                description: '従業員が業務のために通常の勤務地を離れて移動する際に発生する、電車・バス・タクシー代、宿泊費、出張手当などの費用を指します。',
+                subCategories: [
+                    { value: 'regular', label: '常駐先への交通費（クライアント承認済）' },
+                    { value: 'business', label: '出張交通費' },
+                    { value: 'commute', label: '定期代' },
+                    { value: 'taxi', label: 'タクシー代' }
+                ]
+            },
+            communication: {
+                name: '通信費',
+                description: '業務で使用する電話、インターネット、郵便などの通信にかかる費用を指します。',
+                subCategories: [
+                    { value: 'phone', label: '携帯電話料金' },
+                    { value: 'internet', label: 'インターネット料金' },
+                    { value: 'postal', label: '郵送料' }
+                ]
+            },
+            supplies: {
+                name: '消耗品費',
+                description: '事務用品、文房具、備品など、短期間で消費される物品の購入費用を指します。',
+                subCategories: [
+                    { value: 'office', label: '事務用品' },
+                    { value: 'equipment', label: '備品' },
+                    { value: 'other', label: 'その他消耗品' }
+                ]
+            },
+            meeting: {
+                name: '会議費',
+                description: '社内外の会議で発生する飲食代、会場費などの費用を指します。',
+                subCategories: [
+                    { value: 'internal', label: '社内会議' },
+                    { value: 'external', label: '社外会議' },
+                    { value: 'venue', label: '会場費' }
+                ]
+            },
+            entertainment: {
+                name: '接待交際費',
+                description: '取引先や顧客との接待、贈答品などにかかる費用を指します。',
+                subCategories: [
+                    { value: 'meal', label: '接待飲食' },
+                    { value: 'gift', label: '贈答品' },
+                    { value: 'event', label: 'イベント費用' }
+                ]
+            }
+        };
+
+        let selectedCategory = null;
+        let currentStep = 1;
+
+        // 識別用番号を生成
+        function generateCostId() {
+            const now = new Date();
+            const year = now.getFullYear().toString().slice(-2);
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const random = String(Math.floor(Math.random() * 100)).padStart(2, '0');
+            return `FY${year}${month}${day}0A${random}`;
+        }
+
+        // 勘定科目選択
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // 選択状態をリセット
+                document.querySelectorAll('.category-item').forEach(i => i.classList.remove('selected'));
+                // 選択
+                this.classList.add('selected');
+                selectedCategory = this.dataset.category;
+
+                // 説明を表示
+                const desc = categoryDescriptions[selectedCategory];
+                document.getElementById('descriptionTitle').textContent = desc.name + ':';
+                document.getElementById('descriptionText').textContent = desc.description;
+                document.getElementById('categoryDescription').style.display = 'block';
+
+                // 次へボタンを有効化
+                document.getElementById('nextToStep2').disabled = false;
+            });
+        });
+
+        // ステップ切り替え関数
+        function goToStep(step) {
+            currentStep = step;
+
+            // ステップインジケーター更新
+            document.querySelectorAll('.step-item').forEach((item, index) => {
+                item.classList.remove('active', 'completed');
+                if (index + 1 < step) {
+                    item.classList.add('completed');
+                } else if (index + 1 === step) {
+                    item.classList.add('active');
+                }
+            });
+
+            // コンテンツ切り替え
+            document.querySelectorAll('.step-content').forEach((content, index) => {
+                content.classList.remove('active');
+                if (index + 1 === step) {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        // ステップ1 → ステップ2
+        document.getElementById('nextToStep2').addEventListener('click', function() {
+            if (!selectedCategory) return;
+
+            // 識別用番号を生成
+            document.getElementById('costId').value = generateCostId();
+
+            // 勘定科目をセット
+            document.getElementById('selectedCategory').value = categoryDescriptions[selectedCategory].name;
+
+            // サブカテゴリを更新
+            const subCategorySelect = document.getElementById('subCategory');
+            subCategorySelect.innerHTML = '<option value="">選択してください</option>';
+            categoryDescriptions[selectedCategory].subCategories.forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub.value;
+                option.textContent = sub.label;
+                subCategorySelect.appendChild(option);
+            });
+
+            // 今日の日付をセット
+            document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+
+            goToStep(2);
+        });
+
+        // ステップ2 → ステップ1
+        document.getElementById('backToStep1').addEventListener('click', function() {
+            goToStep(1);
+        });
+
+        // ステップ2 → ステップ3
+        document.getElementById('nextToStep3').addEventListener('click', function() {
+            // バリデーション
+            const form = document.getElementById('costForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            goToStep(3);
+        });
+
+        // ステップ3 → ステップ2
+        document.getElementById('backToStep2').addEventListener('click', function() {
+            goToStep(2);
+        });
+
+        // 申請ボタン
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const approver = document.getElementById('approver').value;
+            if (!approver) {
+                alert('提出先を選択してください');
+                return;
+            }
+
+            // TODO: サーバーに送信
+            alert('申請が完了しました');
+            window.location.href = '/costs/list';
+        });
+    </script>
+</body>
+</html>
+
