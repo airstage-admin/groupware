@@ -8,11 +8,12 @@
   <div>
 	社員勤怠一覧&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
 
-	<select id="departmentCategory" name="departmentCategory">
+	<select id="departmentCategory" name="departmentCategory">	
 	    <option th:each="entry : ${departmentMap}"
 	            th:value="${entry.key}"
 	            th:text="${entry.value}"
-	            th:selected="${entry.key == selectedDepartmentCategory}"> 
+	            th:selected="${entry.key == selectedDepartmentCategory}"
+			    th:if="${entry.value != '管理者' and entry.value != '決裁者'}"> 
 	    </option>
 	</select><br><br>
 
