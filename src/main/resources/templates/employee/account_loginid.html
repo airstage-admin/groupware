@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>社内グループウェア</title>
+</head>
+<body>
+	<h2>ログインID変更</h2>
+		
+	<br>
+	 
+	<form method="post" th:action="@{/account_loginid}" th:object="${employeeLoginIdForm}">
+	    <label for="newLoginId">
+		   <span style="color: red;">*</span>ログインID
+		 </label>
+		 
+		 <!-- 入力欄 -->
+		 <input type="text" id="newLoginId" name="newLoginId" th:field="*{newLoginId}" size="30" maxlength="50" required placeholder="ログインID" />&ensp;&ensp;※ログインIDは半角英数字と記号（._-!@）のみで入力してください。<br>
+		 <br>
+		 <!-- エラーメッセージ表示部分 -->
+		  <p th:errors="*{newLoginId}" style="color: red; margin: 0;"></p>
+		  
+		  <!-- システムエラー等のメッセージ -->
+		  <p th:if="${message}" th:text="${message}" style="color: red; margin: 0;"></p>
+		 
+		 <button type="submit" name="action" value="cancel" formnovalidate>キャンセル</button>&ensp;&ensp;
+		 <button type="submit" name="action" value="update">登録</button>
+	 </form>
+	 
+</body>
+
+
+</html>

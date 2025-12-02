@@ -57,6 +57,19 @@ public interface UserDao {
 	void update(UserDto userDto);
 
 	/**
+    * ログインIDのみを更新する
+    * * @param userDto ユーザーIDと新しいログインID、および更新者IDを含むデータ
+    */
+    void updateLoginId(UserDto userDto); 
+    
+    /**
+	* パスワードを更新する
+	* @param　id ユーザーID
+	* @param　newPassword 新しいパスワード
+	*/
+	void updatePassword(int id, String newPassword);
+	
+	/**
 	* 社員アカウントデータを停止する
 	* 
 	* @param　id 社員アカウントID

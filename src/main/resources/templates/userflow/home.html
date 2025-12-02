@@ -24,7 +24,8 @@
 	</th:block>
 	
 	<th:block th:if="!${admin}">
-		<form th:action="@{/employee_account_edit}" method="post" style="display:inline;">
+		<form th:action="@{/account_home}" method="get" style="display:inline;">
+		  <input type="hidden" name="id" th:value="${user.id}" />
 		  <button type="submit">アカウント管理</button>
 		</form>
 		
