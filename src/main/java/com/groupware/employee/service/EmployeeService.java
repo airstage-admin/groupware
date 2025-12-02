@@ -2,6 +2,8 @@ package com.groupware.employee.service;
 
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
+
 import com.groupware.dto.UserDto;
 
 /**
@@ -44,6 +46,14 @@ public interface EmployeeService {
 	* @return
 	*/
 	void update(UserDto userDto);
+	
+	/**
+	 * ログインIDのみを更新する
+	 * 
+	 * @param　userDto 更新対象のIDと新しいログインIDを含むデータ
+	 * @throws DataAccessException データアクセス層でエラーが発生した場合
+	 */
+	 void updateLoginId(UserDto userDto);
 
 	/**
 	* 社員アカウントデータを停止する
@@ -61,4 +71,21 @@ public interface EmployeeService {
 	* @return　false：非管理者、true：管理者
 	*/
 	boolean is_admin(int id);
+	
+	/**
+	 * 現在のパスワードが正しいかチェックする
+	 * 
+	 * @param id ユーザーID
+	 * @param currentPassword 入力された現在のパスワード
+	 * @return true：一致（正しい）、false：不一致
+	 */
+	boolean checkPassword(int id, String currentPassword);
+
+	/**
+	 * パスワードを更新する
+	 * 
+	 * @param id ユーザーID
+	 * @param newPassword 新しいパスワード
+	 */
+	void updatePassword(int id, String newPassword);
 }

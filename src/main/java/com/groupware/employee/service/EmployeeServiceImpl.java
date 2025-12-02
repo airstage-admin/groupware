@@ -99,6 +99,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		userDao.update(userDto);
 	}
+	
+	/**
+	* ログインIDのみを更新する
+	* @param　userDto ユーザーIDと新しいログインIDを含むデータ
+	* @return
+	*/
+	@Override
+	public void updateLoginId(UserDto userDto) {
+		userDao.updateLoginId(userDto);
+	}
 
 	/**
 	* 社員アカウントデータを停止する
@@ -111,7 +121,39 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public void accountStop(int id, int updateId) {
 		userDao.accountStop(id, updateId);
 	}
+	
+	/**
+	 * 現在のパスワードが正しいかチェックする
+	 * 
+	 * @param id ユーザーID
+	 * @param currentPassword 入力された現在のパスワード
+	 * @return true：一致（正しい）、false：不一致
+	 */
+	@Override
+	public boolean checkPassword(int id, String currentPassword) {
+		// ユーザー情報を取得
+		UserDto user = userDao.findByUser(id);
+		
+		if (user == null) {
+			return false; // ユーザーが見つからなければエラー扱い
+		}
+		
+		// DBのパスワードと入力されたパスワードを比較
+		return user.getPassword().equals(currentPassword);
+	}
 
+	/**
+	 * パスワードを更新する
+	 * 
+	 * @param id ユーザーID
+	 * @param newPassword 新しいパスワード
+	 */
+	@Override
+	public void updatePassword(int id, String newPassword) {
+		// UserDaoに更新処理を依頼
+		userDao.updatePassword(id, newPassword);
+	}
+	
 	/**
 	* ログインユーザーの管理者区分チェック
 	* 
