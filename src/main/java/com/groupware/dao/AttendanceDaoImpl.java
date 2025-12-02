@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -185,6 +186,26 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			return false;
 		}
 	}
+	
+	/**
+     * 指定月の全社員の勤怠データを取得（全勤務先含む）
+     * @param　ym 対象年月
+     * @return　List<AttendanceDto>
+     */
+    @Override
+    public List<AttendanceDto> findAllByMonth(YearMonth ym) {
+        // 全ユーザーの指定月データを取得
+        String sql = "SELECT * FROM attendance " +
+                     "WHERE YEAR(working_day) = ? AND MONTH(working_day) = ? " +
+                     "AND delflg = false " +
+                     "ORDER BY user_id, working_day, place_work";
+        try {
+            return jdbcTemplate.query(sql, (rs, rowNum) -> mapRow(rs), ym.getYear(), ym.getMonthValue());
+        } catch (Exception e) {
+            logger.error("全社員勤怠データ取得時、DBアクセスエラー", e);
+            return new ArrayList<>();
+        }
+    }
 
 	// RowMapper
 	private AttendanceDto mapRow(ResultSet rs) throws SQLException {
