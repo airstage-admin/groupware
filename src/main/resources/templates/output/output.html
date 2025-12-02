@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>出力管理 - 社内グループウェア</title>
+    <link rel="stylesheet" href="/css/attendanceList.css" type="text/css">
+</head>
+
+<body>
+
+<div class="container">
+    <h2>出力管理</h2>
+    
+    <div id="serverMessage" class="msg" th:if="${message}" th:text="${message}"></div>
+    <div id="serverError" class="err" th:if="${error}" th:text="${error}"></div>
+
+    <form th:action="@{/output_submit}" th:object="${outputForm}" method="post" id="outputForm">
+        
+        <div class="row">
+            <label>出力項目：</label>
+           
+            <select id="outputItem" th:field="*{outputItem}" onchange="resetState()">
+                <option th:each="item : ${itemMap}" th:value="${item.key}" th:text="${item.value}"></option>
+            </select>
+        </div>
+
+        <div class="row">
+            <label>出力対象年月：</label>
+            
+            <select id="targetYearMonth" th:field="*{targetYearMonth}" onchange="resetState()">
+                <option th:each="month : ${yearMonthMap}" th:value="${month.key}" th:text="${month.value}"></option>
+            </select>
+        </div>
+
+        <div class="buttons">
+            <button type="submit" name="action" value="cancel" formnovalidate>キャンセル</button>
+            
+            <button type="submit" name="action" value="check" id="btnCheck">勤怠確認</button>
+            
+            <button type="submit" name="action" value="output" id="btnOutput">出力</button>
+        </div>
+        
+        <input type="hidden" id="isCheckOk" th:field="*{checkOk}" />
+    </form>
+</div>
+
+
+<script th:src="@{/output/output.js}"></script>
+
+</body>
+</html>

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -21,8 +22,8 @@ import com.groupware.dto.AttendanceDto;
 /**
 * AttendanceDaoImpl
 * attendanceテーブル用DAO
-* @author　N.Hirai
-* @version　1.0.0
+* @author N.Hirai
+* @version 1.0.0
 */
 @Repository
 public class AttendanceDaoImpl implements AttendanceDao {
@@ -35,12 +36,12 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	/**
 	* 対象月の勤怠データをattendanceテーブルに作成する
 	* 
-	* @param　userId ユーザーID
-	* @param　date 対象年月日
-	* @param　weekEnum WeekCategoryのENUM値
-	* @param　holiday HolidayCategoryのENUM値
-	* @param　placeCode 勤務先コード
-	* @return　
+	* @param userId ユーザーID
+	* @param date 対象年月日
+	* @param weekEnum WeekCategoryのENUM値
+	* @param holiday HolidayCategoryのENUM値
+	* @param placeCode 勤務先コード
+	* @return 
 	*/
 	@Override
 	public void insert(long userId, LocalDate date, WeekCategory weekEnum, HolidayCategory holidayEnum, int placeCode) {
@@ -66,9 +67,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	/**
 	* 入力された勤怠データをユーザーの当月データを取得する
 	* 
-	* @param　userId ユーザーID
-	* @param　ym 当月
-	* @param　placeCode 勤務先コード
+	* @param userId ユーザーID
+	* @param ym 当月
+	* @param placeCode 勤務先コード
 	* @return
 	*/
 	@Override
@@ -85,9 +86,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	/**
 	* ユーザーの当月データを取得する
 	* 
-	* @param　userId ユーザーID
-	* @param　ym 当月
-	* @return　List<AttendanceDto>
+	* @param userId ユーザーID
+	* @param ym 当月
+	* @return List<AttendanceDto>
 	*/
 	@Override
 	public List<AttendanceDto> findByUserAndMonthPaidDate(long userId, YearMonth ym) {
@@ -103,8 +104,8 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	/**
 	* 入力された勤怠データをIDで取得する
 	* 
-	* @param　id AttendanceDtoのID
-	* @return　
+	* @param id AttendanceDtoのID
+	* @return 
 	*/
 	public AttendanceDto findById(long id) {
 		String sql = "SELECT * FROM attendance WHERE id = ?";
@@ -119,9 +120,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	/**
 	* 勤怠データを更新する
 	* 
-	* @param　dto saveAttendanceDTO
-	* @param　id 更新者id
-	* @return　
+	* @param dto saveAttendanceDTO
+	* @param id 更新者id
+	* @return 
 	*/
 	@Transactional(rollbackFor = SQLException.class)
 	public void update(AttendanceDto dto, int id) {
@@ -152,8 +153,8 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	/**
 	* 入力された勤怠データを論理削除する
 	* 
-	* @param　id AttendanceDtoのID
-	* @return　
+	* @param id AttendanceDtoのID
+	* @return 
 	*/
 	@Transactional(rollbackFor = SQLException.class)
 	public void delete(long id, int updatedBy) {
@@ -169,9 +170,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	/**
 	* 今月の勤怠初期データがあるかチェック 
 	* 
-	* @param　userId ユーザーID
-	* @param　ym 対象年月
-	* @return　boolean
+	* @param userId ユーザーID
+	* @param ym 対象年月
+	* @return boolean
 	*/
 	@Override
 	public boolean existsByInitialAttendanceDate(long userId, YearMonth ym) {
@@ -185,6 +186,27 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			return false;
 		}
 	}
+	
+	/**
+     * 指定月の全社員の勤怠データを取得（全勤務先含む）
+     * @param ym 対象年月
+     * @return List<AttendanceDto>
+     */
+    @Override
+    public List<AttendanceDto> findAllByMonth(YearMonth ym) {
+        // 全ユーザーの指定月データを取得
+        String sql = "SELECT * FROM attendance " +
+                     "WHERE YEAR(working_day) = ? AND MONTH(working_day) = ? " +
+                     "AND delflg = false " +
+                     "ORDER BY user_id, working_day, place_work";
+        try {
+            return jdbcTemplate.query(sql, (rs, rowNum) -> mapRow(rs), ym.getYear(), ym.getMonthValue());
+        } catch (Exception e) {
+            logger.error("全社員勤怠データ取得時、DBアクセスエラー", e);
+            return new ArrayList<>();
+        }
+    }
+    
 
 	// RowMapper
 	private AttendanceDto mapRow(ResultSet rs) throws SQLException {
