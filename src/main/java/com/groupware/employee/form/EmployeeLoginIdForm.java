@@ -16,13 +16,13 @@ import com.groupware.common.constant.CommonConstants;
 */
 public class EmployeeLoginIdForm {
 	
-	 @NotBlank(message = "新しいログインIDを入力してください")
+	 @NotBlank(message = "新しいログインIDを入力してください。")
 	 @Size(min = CommonConstants.LOGIN_ID_MIN_LENGTH, 
 	       max = CommonConstants.LOGIN_ID_MAX_LENGTH, 
-	       message = "ログインIDは{min}文字以上{max}文字以内で入力してください")
+	       message = "ログインIDは{min}文字以上{max}文字以内で入力してください。")
 	 
 	 @Pattern(regexp = CommonConstants.ID_PASS_REGEX, 
-	          message = "ログインIDは半角英数字と記号（._-!@）のみで入力してください")
+	          message = "ログインIDは半角英数字と記号（._-!@）のみで入力してください。")
 	 private String newLoginId;
 
     // ==========================================================
