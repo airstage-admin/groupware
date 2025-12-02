@@ -102,14 +102,13 @@ public class UserFlowController {
 	*/
 	@PostMapping("/login")
 	public String login(
-	     @Validated @ModelAttribute LoginForm form, // ★修正：LoginFormで受け取る
-	     BindingResult result,                      // ★追加：エラー結果が入る（必ずFormの後ろに書く）
+	     @Validated @ModelAttribute LoginForm form, 
+	     BindingResult result,
 	     HttpSession session, 
 	     Model model
 	){
 		if (result.hasErrors()) {
 			// エラーがある場合は、ログイン処理を行わずに画面に戻す
-			// （エラーメッセージはThymeleafがBindingResultから自動で表示します）
 			return "index";
 		}
 		
