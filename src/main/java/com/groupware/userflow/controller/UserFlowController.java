@@ -9,9 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.groupware.common.registry.DepartmentRegistry;
 import com.groupware.common.registry.EmployeeCategoryRegistry;
@@ -22,6 +24,7 @@ import com.groupware.dto.EmployeeCategoryDto;
 import com.groupware.dto.PlaceCategoryDto;
 import com.groupware.dto.UserDto;
 import com.groupware.dto.VacationCategoryDto;
+import com.groupware.userflow.form.LoginForm;
 import com.groupware.userflow.service.UserFlowService;
 
 /**
@@ -45,7 +48,8 @@ public class UserFlowController {
 	* INDEX処理（GET用）
 	*/
 	@GetMapping("/index")
-	public String index() {
+	public String index(Model model) {
+		model.addAttribute("loginForm", new LoginForm());
 		return "index";
 	}
 
@@ -53,7 +57,8 @@ public class UserFlowController {
 	* LOGIN処理（GET用）
 	*/
 	@GetMapping("/login")
-	public String login() {
+	public String login(Model model) {
+		model.addAttribute("loginForm", new LoginForm());
 		return "index";
 	}
 
@@ -61,7 +66,8 @@ public class UserFlowController {
 	* LOGOUT処理（GET用）
 	*/
 	@GetMapping("/logout")
-	public String logout() {
+	public String logout(Model model) {
+		model.addAttribute("loginForm", new LoginForm());
 		return "index";
 	}
 
@@ -95,7 +101,20 @@ public class UserFlowController {
 	* @return　
 	*/
 	@PostMapping("/login")
-	public String login(@RequestParam String loginid, @RequestParam String password, HttpSession session, Model model) {
+	public String login(
+	     @Validated @ModelAttribute LoginForm form, 
+	     BindingResult result,
+	     HttpSession session, 
+	     Model model
+	){
+		if (result.hasErrors()) {
+			// エラーがある場合は、ログイン処理を行わずに画面に戻す
+			return "index";
+		}
+		
+		String loginid = form.getLoginid();
+		String password = form.getPassword();
+		
 		try {
 			// ログインを確認する
 			UserDto user = userFlowService.login(loginid, password);
@@ -121,7 +140,7 @@ public class UserFlowController {
 				return "redirect:/userflow/home";
 
 			} else {
-				model.addAttribute("error", "ログインに失敗しました。ユーザー名またはパスワードが間違っています。");
+				model.addAttribute("error", "ログインに失敗しました。ユーザー名またはパスワードが間違っています");
 				return "index";
 			}
 		} catch (Exception e) {
@@ -138,9 +157,10 @@ public class UserFlowController {
 	* @return　
 	*/
 	@PostMapping("/logout")
-	public String logout(HttpSession session) {
+	public String logout(HttpSession session, Model model) {
 		// セッションを破棄
 		session.invalidate();
+		model.addAttribute("loginForm", new LoginForm());
 		return "index";
 	}
 }

@@ -7,12 +7,14 @@
 <body>
 	<h2>ログイン</h2>
 	
-	<form th:action="@{/login}" method="post">
+	<form th:action="@{/login}" th:object="${loginForm}" method="post">
 		<label for="loginid">ログインID：</label>
-		<input type="text" id="loginid" name="loginid" maxlength="50" required><br><br>
+		<input type="text" th:field="*{loginid}" maxlength="50" required><br>
+		<span th:errors="*{loginid}" style="color:red;"></span><br>
 		
 		<label for="password">パスワード：</label>
-		<input type="password" id="password" name="password" maxlength="100" required><br><br>
+		<input type="password" th:field="*{password}" maxlength="100" required><br>
+		<span th:errors="*{password}" style="color:red;"></span><br>
 		
 		<button type="submit">ログイン</button>
 	</form>
