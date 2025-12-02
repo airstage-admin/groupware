@@ -17,27 +17,27 @@ import com.groupware.employee.validation.PasswordCheck;
 @PasswordCheck(
 	    field1 = "newPassword", 
 	    field2 = "newPasswordConfirm", 
-	    message = "新しいパスワードと確認用パスワードが一致しません"
+	    message = "新しいパスワードと確認用パスワードが一致しません。"
 )
 
 public class EmployeePasswordForm {
 
 	 // 現在のパスワード
-    @NotBlank(message = "現在のパスワードを入力してください")
+    @NotBlank(message = "現在のパスワードを入力してください。")
     private String currentPassword;
 
     // 新しいパスワード
-    @NotBlank(message = "新しいパスワードを入力してください")
+    @NotBlank(message = "新しいパスワードを入力してください。")
     @Size(min = CommonConstants.PASSWORD_MIN_LENGTH, 
           max = CommonConstants.PASSWORD_MAX_LENGTH, 
-          message = "パスワードは{min}文字以上{max}文字以下で入力してください")
+          message = "パスワードは{min}文字以上{max}文字以下で入力してください。")
     
     @Pattern(regexp = CommonConstants.ID_PASS_REGEX, 
-          message = "パスワードは半角英数字と記号（._-!@）のみで入力してください")    
+          message = "パスワードは半角英数字と記号（._-!@）のみで入力してください。")    
     private String newPassword;
 
     // 新しいパスワード（確認用）
-    @NotBlank(message = "確認用パスワードを入力してください")
+    @NotBlank(message = "確認用パスワードを入力してください。")
     private String newPasswordConfirm;
 
 
