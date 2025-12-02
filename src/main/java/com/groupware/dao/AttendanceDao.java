@@ -80,4 +80,13 @@ public interface AttendanceDao {
 	* @return　boolean
 	*/
 	boolean existsByInitialAttendanceDate(long userId, YearMonth ym);
+
+	/**
+	* 今月の勤怠初期データがあるかチェック 
+	* 
+	* @param　userId ユーザーID
+	* @param　ym 対象年月
+	* @return　boolean
+	*/
+	boolean existsByInitialAttendanceDate2(long userId, YearMonth ym);
 }

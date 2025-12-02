@@ -212,4 +212,10 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		dto.setUpdatedAt(rs.getString("updated_at"));
 		return dto;
 	}
+
+	@Override
+	public boolean existsByInitialAttendanceDate2(long userId, YearMonth ym) {
+		// TODO 自動生成されたメソッド・スタブ
+		return false;
+	}
 }
