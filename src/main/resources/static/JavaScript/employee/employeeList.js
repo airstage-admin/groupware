@@ -8,11 +8,24 @@ function setCookie(name, value, days) {
     document.cookie = name + "=" + (value || "") + expires + "; path=/; secure; samesite=Lax";
 }
 
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const selectElement = document.getElementById('departmentCategory');
 
     if (selectElement) {
         selectElement.addEventListener('change', function() {
+			
+			setCookie('departmentCategoryCookie', this.value, 31);
 			// ① 選択された「部署名の文字」を取得（例："総務"）
 			            const selectedText = this.options[this.selectedIndex].text;
 			            
@@ -38,6 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
 			                }
 			            });
 			        });
+					
+					const savedValue = getCookie('departmentCategoryCookie');
+					        if (savedValue) {
+					            selectElement.value = savedValue;
+					            // 値を入れただけでは動かないので、無理やり「変更イベント」を起こして上の処理を動かす
+					            selectElement.dispatchEvent(new Event('change'));
+					        }
 			    }   
 
     // ボタン要素をIDで取得
