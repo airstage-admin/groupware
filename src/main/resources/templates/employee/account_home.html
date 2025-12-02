@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>社内グループウェア</title>
+</head>
+<body>
+	<div style="display: flex; align-items: center;">
+		<h2>アカウント管理</h2>
+		&emsp;&emsp;
+		<form th:action="@{/userflow/home}" method="get" style="display:inline;">
+			<button type="submit">HOME</button>
+		</form>
+	 </div>	 
+	 
+	    <table class="layout-table">
+	       <!-- ログインIDの行 -->
+	       <tr>
+	           <td class="label-col"><label>ログインID：</label></td>
+	           <td><span th:text="${user.loginid}">現在のログインID</span></td>
+	           <td>
+	               <!-- ログインID変更ボタン -->
+				   <form th:action="@{/account_loginid}" method="post"style="display:inline;">
+				       <input type="hidden" name="id" th:value="${userdto.id}" />
+				       <button type="submit">変更</button>
+				   </form>
+	           </td>
+	       </tr>
+
+	       <!-- パスワードの行 -->
+	       <tr>
+	           <td class="label-col"><label>パスワード：</label></td>
+	           <td><span>********</span></td> <!-- パスワードは表示しないのが一般的 -->
+	           <td>
+	               <!-- パスワード変更ボタン -->
+	               <form th:action="@{/account_password}" method="post">
+	                   <input type="hidden" name="id" th:value="${passwordForm}" /> 
+	                   <button type="submit">変更</button>
+	               </form>
+	           </td>
+	       </tr>
+	    </table>
+</body>
+</html>

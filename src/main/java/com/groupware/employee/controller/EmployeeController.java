@@ -265,33 +265,6 @@ public class EmployeeController {
 	}
 
 	/**
-	* アカウント編集に遷移する（社員用）
-	* 
-	* @param　session セッション
-	* @param　model モデル
-	* @return　
-	*/
-	@PostMapping("/employee_account_edit")
-	public String employeeAccountEdit(HttpSession session, Model model) {
-		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
-		if (loginUser == null) {
-			return "redirect:/index";
-		}
-
-		// 社員アカウントデータ取得
-		UserDto dto = employeeService.findByUser(loginUser.getId());
-
-		// 取得データをmodelにセット
-		model.addAttribute("user", loginUser);
-		model.addAttribute("selectedDepartmentCategory", dto.getDepartment());
-		model.addAttribute("selectedEmployeeCategory", dto.getEmployeeType());
-		model.addAttribute("userdto", dto);
-		model.addAttribute("departmentMap", DepartmentRegistry.departmentTypeSelectSet(false));
-		
-		return "/employee/employee_edit";
-	}
-
-	/**
 	* 部署のクッキー設定してあるデータを取得する
 	* 
 	* @param　departmentCategoryCookieValue 部署のクッキー値

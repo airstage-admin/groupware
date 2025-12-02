@@ -187,6 +187,27 @@ public class UserDaoImpl implements UserDao {
 			}
 		}
 	}
+	
+	/**
+	* ログインIDのみを更新する
+	* @param　userDto ユーザーIDと新しいログインID、および更新者IDを含むデータ
+	* @return
+	*/
+	@Override
+	public void updateLoginId(UserDto userDto) {
+		String sql = "UPDATE users "
+				+ "SET login_id = ?, updated_by = ?, updated_at = NOW() "
+				+ "WHERE id = ?";
+		try {
+			// userDtoから新しいログインID、更新者ID、更新対象のIDを取得してSQLを実行
+			jdbcTemplate.update(sql,
+					userDto.getLoginid(),
+					userDto.getUpdatedBy(),
+					userDto.getId());
+		} catch (Exception e) {
+			logger.error("usersデータ (ログインID) 更新時、DBアクセスエラー", e);
+		}
+	}
 
 	/**
 	* 社員アカウントデータを停止する
@@ -301,4 +322,23 @@ public class UserDaoImpl implements UserDao {
 
 		return dto;
 	}
+	
+	/**
+	* パスワードを更新する
+	* @param　id ユーザーID
+	* @param　newPassword 新しいパスワード
+	*/
+	@Override
+	public void updatePassword(int id, String newPassword) {
+		// パスワード、更新者(自分=0またはid)、更新日時を更新
+		String sql = "UPDATE users "
+				+ "SET password = ?, updated_by = ?, updated_at = NOW() "
+				+ "WHERE id = ?";
+		try {
+			jdbcTemplate.update(sql, newPassword, id, id);
+		} catch (Exception e) {
+			logger.error("パスワード更新時、DBアクセスエラー", e);
+		}
+	}
+	
 }
