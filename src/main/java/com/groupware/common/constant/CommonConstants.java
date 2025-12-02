@@ -33,6 +33,13 @@ public final class CommonConstants {
 	public static final String NAME_REGEX = "^[ぁ-んァ-ヶ一-龥Ａ-Ｚａ-ｚ**　**]+$"; // 名前（全角）
 	public static final String DATE_REGEX = "^[0-9]{4}/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$"; // 入社日（YYYY/MM/DD）
 
+	
+	//文字数
+	public static final int LOGIN_ID_MIN_LENGTH = 4; //ログインID最小文字数
+    public static final int LOGIN_ID_MAX_LENGTH = 50; //ログインID最大文字数
+    public static final int PASSWORD_MIN_LENGTH = 8; //パスワード最小文字数
+    public static final int PASSWORD_MAX_LENGTH = 100; //パスワード最大文字数
+	
 	// SQL演算子
 	public static final String JUDGE_EQUAL = "=";
 	public static final String JUDGE_GT = ">";

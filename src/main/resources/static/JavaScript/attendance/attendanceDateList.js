@@ -50,14 +50,18 @@ function generateMonthYearOptions() {
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth(); // 0-11
     const lastSelected = getCookie('selected_month_year');
+	
+	const prevMonthDate = new Date(currentYear, currentMonth - 1, 1);
+	const pmYear = prevMonthDate.getFullYear();
+	const pmMonth = prevMonthDate.getMonth() + 1;
     
     // クッキーがなければ、当月をデフォルト値とする
-    const currentMonthYear = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+    const currentMonthYear = `${pmYear}-${String(pmMonth).padStart(2, '0')}`;
     const defaultMonthYear = lastSelected || currentMonthYear;
 
     // 選択範囲の計算 (前1年～今月)
     const startDate = new Date(currentYear, currentMonth - 12); // 12ヶ月前
-    const endDate = new Date(currentYear, currentMonth);   // 今月
+    const endDate = new Date(currentYear, currentMonth -1);   // 前月
 
     // オプションの生成と**一時配列への追加**
     let iterDate = new Date(startDate.getFullYear(), startDate.getMonth());
