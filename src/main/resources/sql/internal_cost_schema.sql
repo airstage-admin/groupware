@@ -65,6 +65,14 @@ CREATE TABLE IF NOT EXISTS apply_history (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 拡張権限
+-- role: 1...一般, 2...管理者, 3...決裁者
+CREATE TABLE IF NOT EXISTS extend_role (
+    target_user_id INT NOT NULL,
+    role INT NOT NULL,
+    PRIMARY KEY (target_user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 -- ============================================
 -- テストデータ INSERT
