@@ -3,7 +3,7 @@ package com.groupware.common.constant;
 /**
  * OutputCategory
  * 出力項目カテゴリ
- * @author　S.dasgo
+ * @author　S.daigo
  * @version　1.0.0
  */
 public enum OutputCategory {

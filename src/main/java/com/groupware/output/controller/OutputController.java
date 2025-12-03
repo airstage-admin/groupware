@@ -1,9 +1,8 @@
 package com.groupware.output.controller;
 
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
-import java.util.Map;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,108 +15,141 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.groupware.common.constant.OutputCategory;
+import com.groupware.dto.UserDto;
 import com.groupware.output.form.OutputForm;
 
 /**
  * OutputController
- * @author　S.dasgo
+ * @author　S.daigo
  * @version　1.0.0
  */
 @Controller
 public class OutputController {
 
-    private static final Logger logger = LoggerFactory.getLogger(OutputController.class);
+	private static final Logger logger = LoggerFactory.getLogger(OutputController.class);
 
-    /**
-     * ドロップダウンリスト用のデータを準備し、Modelに追加する共通メソッド
-     * @param　model モデル
-     */
-    private void populateDropdowns(Model model) {
-        // 出力項目のマップをEnumから作成
-        Map<String, String> itemMap = new LinkedHashMap<>();
-        for (OutputCategory category : OutputCategory.values()) {
-            itemMap.put(category.getCode(), category.getLabel());
-        }
-        model.addAttribute("itemMap", itemMap);
+	/**
+	 * 初期表示
+	 */
+	@GetMapping("/output")
+	public String showOutputForm(Model model, HttpSession session,
+			@ModelAttribute("outputForm") OutputForm form) {
 
-        // 対象年月のマップを作成 (システム年月の前月から過去12ヶ月)
-        Map<String, String> yearMonthMap = new LinkedHashMap<>();
-        YearMonth startMonth = YearMonth.now().minusMonths(1); // 前月から開始
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy - MM");
-        
-        for (int i = 0; i < 12; i++) {
-            YearMonth ym = startMonth.minusMonths(i);
-            yearMonthMap.put(ym.toString(), ym.format(formatter));
-        }
-        model.addAttribute("yearMonthMap", yearMonthMap);
-    }
+		//セッション切れ確認
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
 
-    /**
-     * 初期表示
-     * @param　model
-     * @return　画面テンプレートのパス
-     */
-    @GetMapping("/output")
-    public String showOutputForm(Model model) {
-        logger.info("GET /output : 出力管理画面を表示します。");
+		logger.info("GET /output : 出力管理画面を表示します。");
 
-        //フォームオブジェクトをモデルに設定
-        if (!model.containsAttribute("outputForm")) {
-            OutputForm form = new OutputForm();
-            //初期値を設定
-            form.setOutputItem(OutputCategory.ATTENDANCE.getCode());
-            form.setTargetYearMonth(YearMonth.now().minusMonths(1).toString());
-            model.addAttribute("outputForm", form);
-        }
-        
-        //ドロップダウンリストのデータをモデルに追加
-        populateDropdowns(model);
+		//初期値設定
+		if (form.getTargetYearMonth() == null) {
+			form.setTargetYearMonth(YearMonth.now().minusMonths(1).toString());
+		}
 
-        return "output/output"; // resources/templates/output/output.html を指す
-    }
+		model.addAttribute("reportTypes", OutputCategory.values());
 
-    /**
-     * 出力管理画面のフォーム送信処理 (POST)
-     * @param　form フォームオブジェクト
-     * @param　action 押されたボタンのvalue値 ("check", "output", "home")
-     * @param　redirectAttributes リダイレクト先にメッセージを渡すためのオブジェクト
-     * @return　リダイレクト先のURL
-     */
-    @PostMapping("/output_submit")
-    public String handleSubmit(
-            @ModelAttribute("outputForm") OutputForm form,
-            @RequestParam("action") String action,
-            RedirectAttributes redirectAttributes) {
+		return "output/output";
+	}
 
-        logger.info("POST /output_submit : action={}", action);
-        
-        switch (action) {
-        case "check":
-            logger.info("--- 勤怠確認処理が実行されました ---");
-            logger.info("選択された項目: {}", form.getOutputItem());
-            logger.info("選択された年月: {}", form.getTargetYearMonth());
-            
-            // 確認OKのフラグ設定などは削除し、メッセージのみ設定
-            redirectAttributes.addFlashAttribute("message", "勤怠入力に特に問題ありませんでした。");
-            break;
+	/**
+	 * 出力管理画面のフォーム送信処理
+	 */
+	@PostMapping("/output_submit")
+	public String handleSubmit(
+			@ModelAttribute("outputForm") OutputForm form,
+			@RequestParam("action") String action,
+			RedirectAttributes redirectAttributes,
+			HttpSession session) {
 
-        case "output":
-            logger.info("--- 出力処理が実行されました ---");
-            logger.info("選択された項目: {}", form.getOutputItem());
-            logger.info("選択された年月: {}", form.getTargetYearMonth());
+		// セッション切れ確認
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
 
-            // if文によるチェック処理を削除し、直接完了メッセージを設定
-            redirectAttributes.addFlashAttribute("message", "ファイルの出力処理を実行しました。（ダミー）");
-            break;
+		logger.info("POST /output_submit : action={}", action);
 
-        case "home":
-            logger.info("--- 「HOME」処理が実行されました。HOME画面にリダイレクトします ---");
-            return "redirect:/userflow/home";
-    }
-        
-        redirectAttributes.addFlashAttribute("outputForm", form);
+		switch (action) {
+		case "check":
+			// 勤怠確認処理
+			executeCheck(form);
+			break;
 
-        // 処理後、再度出力管理画面にリダイレクトして結果を表示する
-        return "redirect:/output";
-    }
+		case "output":
+			// ファイル出力処理
+			executeOutput(form);
+			break;
+
+		case "home":
+			// HOME画面へ遷移
+			return "redirect:/userflow/home";
+		}
+
+		redirectAttributes.addFlashAttribute("outputForm", form);
+		return "redirect:/output";
+	}
+
+	/**
+	 * 勤怠確認処理
+	 */
+	private void executeCheck(OutputForm form) {
+		logger.info("勤怠確認開始: 項目={}", form.getOutputItem());
+		//ここに勤怠確認のロジックを記述してください
+	}
+
+	/**
+	 * ファイル出力処理の振り分け
+	 */
+	private void executeOutput(OutputForm form) {
+		logger.info("出力処理開始: 年月={}", form.getTargetYearMonth());
+
+		switch (form.getOutputItem()) {
+		case "attendance":
+			executeOutputAttendance(form);
+			break;
+		case "paid_leave":
+			executeOutputPaidLeave(form);
+			break;
+		case "internal_pj":
+			executeOutputInternalPj(form);
+			break;
+		case "study":
+			executeOutputStudy(form);
+			break;
+		}
+	}
+
+	/**
+	 * ファイル出力処理：勤怠管理表
+	 */
+	private void executeOutputAttendance(OutputForm form) {
+		logger.info("-> 勤怠管理表の出力処理を実行します。");
+		//ここに勤怠管理の出力ロジックを実装してください
+	}
+
+	/**
+	 * ファイル出力処理：有給管理簿
+	 */
+	private void executeOutputPaidLeave(OutputForm form) {
+		logger.info("-> 有給管理簿の出力処理を実行します。");
+		//ここに有給管理簿の出力ロジックを実装してください
+	}
+
+	/**
+	 * ファイル出力処理：社内PJ
+	 */
+	private void executeOutputInternalPj(OutputForm form) {
+		logger.info("-> 社内PJの出力処理を実行します。");
+		//ここに社内PJの出力ロジックを実装してください
+	}
+
+	/**
+	 * ファイル出力処理：勉強会参加
+	 */
+	private void executeOutputStudy(OutputForm form) {
+		logger.info("-> 勉強会の出力処理を実行します。");
+		//ここに勉強会の出力ロジックを実装してください
+	}
 }
