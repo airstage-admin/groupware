@@ -19,13 +19,13 @@ public class EmployeeForm {
 	private String password;
 
 	@Size(max = 128, message = "氏名は128文字以内で入力してください。")
-	@Pattern(regexp = CommonConstants.NAME_REGEX, message = "氏名は全角で入力してください。")
+	@Pattern(regexp = CommonConstants.NAME_REGEX, message = "氏名は全角かな・全角英字で入力してください。")
 	private String username;
 
-	@Pattern(regexp = CommonConstants.EMPLOYEE_NUMBER, message = "社員番号は数字3桁で入力してください。")
+	@Pattern(regexp = CommonConstants.EMPLOYEE_NUMBER, message = "社員番号は半角数字3桁で入力してください。")
 	private String employeeNo;
 
-	@Pattern(regexp = CommonConstants.MAIL_REGEX, message = "メールアドレスの形式が正しくありません。（例：example@airstage.co.jp)")
+	@Pattern(regexp = CommonConstants.MAIL_REGEX, message = "メールアドレスの形式が正しくありません。メールアドレス形式で、半角英数字、および記号（._%+-）のみを使用して入力してください。")
 	@Size(max = 254, message = "メールアドレスは254文字以内で入力してください。")
 	private String mail;
 

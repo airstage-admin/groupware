@@ -30,8 +30,8 @@ public final class CommonConstants {
 	public static final String EMPLOYEE_NUMBER = "\\d{3}"; // 社員番号（半角数字3桁）
 	public static final String MAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"; // メールアドレス正規表現
 	public static final String ID_PASS_REGEX = "^[a-zA-Z0-9._\\-!@]+$"; // ログインID、パスワード（半角英数字と記号（._-!@））
-	public static final String NAME_REGEX = "^[ぁ-んァ-ヶ一-龥Ａ-Ｚａ-ｚ**　**]+$"; // 名前（全角）
-	public static final String DATE_REGEX = "^[0-9]{4}/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$"; // 入社日（YYYY/MM/DD）
+	public static final String NAME_REGEX = "^[ぁ-んァ-ヶ一-龥Ａ-Ｚａ-ｚ]+$"; // 名前（全角・スペース禁止）
+	public static final String DATE_REGEX = "^[0-9]{4}/(0?[1-9]|1[0-2])/(0?[1-9]|[12][0-9]|3[01])$"; // 入社日（YYYY/MM/DD）月日のゼロ埋め省略可（4/1等もOK）
 
 	
 	//文字数
