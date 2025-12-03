@@ -18,17 +18,20 @@
 			            th:selected="${entry.key == selectedDepartmentCategory}"> 
 			    </option>
 			</select><br><br>
-			<label style="color:red;">*</label><label for="employeeNo">社員番号：</label>
-			<input type="text" id="employeeNo" name="employeeNo" th:field="*{employeeNo}" size="3" maxlength="3" required placeholder="000" />&ensp;&ensp;※社員番号は数字3桁で入力してください。<br>
-			<span th:if="${#fields.hasErrors('employeeNo')}" th:errors="*{employeeNo}" style="color:red;"></span><br>
+			
 			<label style="color:red;">*</label><label for="hireDate">入社日：</label>
 			<input type="text" id="hireDate" name="hireDate" th:field="*{hireDate}" size="6" maxlength="10" required placeholder="2025/10/5" />&ensp;&ensp;※入社日は半角数字YYYY/MM/DD形式で入力してください。<br>
 			<span th:if="${#fields.hasErrors('hireDate')}" th:errors="*{hireDate}" style="color:red;"></span><br>
+			
+			<label style="color:red;">*</label><label for="employeeNo">社員番号：</label>
+			<input type="text" id="employeeNo" name="employeeNo" th:field="*{employeeNo}" size="3" maxlength="3" required placeholder="000" />&ensp;&ensp;※社員番号は半角数字3桁で入力してください。<br>
+			<span th:if="${#fields.hasErrors('employeeNo')}" th:errors="*{employeeNo}" style="color:red;"></span><br>
+						
 			<label style="color:red;">*</label><label for="username">氏名：</label>
-			<input type="text" id="username" name="username" th:field="*{username}" size="60" maxlength="128" required  placeholder="山田　太郎（全角）"/>&ensp;&ensp;※氏名は全角で入力してください。<br>
+			<input type="text" id="username" name="username" th:field="*{username}" size="60" maxlength="128" required  placeholder="山田太郎（全角）"/>&ensp;&ensp;※氏名は全角かな・全角英字で入力してください。<br>
 			<span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color:red;"></span><br>
 			<label style="color:red;">*</label><label for="mail">メールアドレス：</label>
-			<input type="text" id="mail" name="mail" th:field="*{mail}" size="60" maxlength="254" required  placeholder="例）example@airstage.co.jp" />&ensp;&ensp;※メールアドレスは半角英数字で記入してください。<br>
+			<input type="text" id="mail" name="mail" th:field="*{mail}" size="60" maxlength="254" required  placeholder="例）example@airstage.co.jp" />&ensp;&ensp;※メールアドレス形式で、半角英数字、および記号（. _ -）のみを使用して入力してください。<br>
 			<span th:if="${#fields.hasErrors('mail')}" th:errors="*{mail}" style="color:red;"></span><br>
 		</th:block>
 		
@@ -36,7 +39,7 @@
 		<input type="text" id="loginid" name="loginid" th:field="*{loginid}" size="30" maxlength="50" required  placeholder="ログインID" />&ensp;&ensp;※ログインIDは半角英数字と記号（._-!@）のみで入力してください。<br>
 		<span th:if="${#fields.hasErrors('loginid')}" th:errors="*{loginid}" style="color:red;"></span><br>
 		<label style="color:red;">*</label><label for="password">パスワード：</label>
-		<input type="text" id="password" name="password" th:field="*{password}" size="30" maxlength="128" required />&ensp;&ensp;※パスワードは半角英数字と記号（._-!@）のみで入力してください。<br>
+		<input type="text" id="password" name="password" th:field="*{password}" size="30" maxlength="100" required />&ensp;&ensp;※パスワードは半角英数字と記号（._-!@）のみで入力してください。<br>
 		<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red;"></span><br>
 		<th:block th:if="${user.department} == '1'">
 			<label for="workingDay">雇用区分：</label>
@@ -62,7 +65,7 @@
 		</th:block>
 		
 	    
-	    <button type="submit" name="action" value="update">更　新</button>
+	    <button type="submit" name="action" value="update">登録</button>
 	</form>
 
     <p th:if="${error}" th:text="${error}" style="color:red;"></p>
