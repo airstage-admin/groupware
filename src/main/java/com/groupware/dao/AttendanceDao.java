@@ -80,12 +80,4 @@ public interface AttendanceDao {
 	* @return　boolean
 	*/
 	boolean existsByInitialAttendanceDate(long userId, YearMonth ym);
-	
-	  /**
-     * 指定月の全社員の勤怠データを取得（全勤務先含む）
-     * @param ym 対象年月
-     * @return List<AttendanceDto>
-     */
-    List<AttendanceDto> findAllByMonth(YearMonth ym);
-
 }
