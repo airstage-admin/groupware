@@ -40,6 +40,7 @@ public final class CommonConstants {
     public static final int PASSWORD_MIN_LENGTH = 8; //パスワード最小文字数
     public static final int PASSWORD_MAX_LENGTH = 100; //パスワード最大文字数
     public static final int NAME_MAX_LENGTH = 128; //氏名最大文字数
+    public static final int MAIL_MAX_LENGTH = 254; //メールアドレス最大文字数
     
 	
 	// SQL演算子

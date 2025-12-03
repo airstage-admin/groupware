@@ -10,36 +10,54 @@ import com.groupware.employee.validation.LoginIdCheck;
 @LoginIdCheck
 public class EmployeeForm {
 	private int id;
+	
+	//ログインID
 	@NotBlank(message = "新しいログインIDを入力してください。")
 	@Size(min = CommonConstants.LOGIN_ID_MIN_LENGTH, 
 	       max = CommonConstants.LOGIN_ID_MAX_LENGTH, 
 	       message = "ログインIDは{min}文字以上{max}文字以下で入力してください。")
-	@Pattern(regexp = CommonConstants.ID_PASS_REGEX, message = "ログインIDは半角英数字と記号（._-!@）のみで入力してください。")
+	@Pattern(regexp = CommonConstants.ID_PASS_REGEX, 
+			 message = "ログインIDは半角英数字と記号（._-!@）のみで入力してください。")
 	private String loginid;
-
+	
+	//パスワード
 	@NotBlank(message = "新しいパスワードを入力してください。")
     @Size(min = CommonConstants.PASSWORD_MIN_LENGTH, 
           max = CommonConstants.PASSWORD_MAX_LENGTH, 
           message = "パスワードは{min}文字以上{max}文字以下で入力してください。")
-	@Pattern(regexp = CommonConstants.ID_PASS_REGEX, message = "パスワードは半角英数字と記号（._-!@）のみで入力してください。")
+	@Pattern(regexp = CommonConstants.ID_PASS_REGEX, 
+			 message = "パスワードは半角英数字と記号（._-!@）のみで入力してください。")
 	private String password;
 
+	//氏名
+	@NotBlank(message = "新しい氏名を入力してください。")
 	@Size(max = CommonConstants.NAME_MAX_LENGTH, 
     	  message = "氏名は{max}文字以下で入力してください。")
-	
-	@Pattern(regexp = CommonConstants.NAME_REGEX, message = "氏名は全角かな・全角英字で入力してください。")
+	@Pattern(regexp = CommonConstants.NAME_REGEX, 
+			 message = "氏名は全角かな・全角英字で入力してください。")
 	private String username;
 
-	@Pattern(regexp = CommonConstants.EMPLOYEE_NUMBER, message = "社員番号は半角数字3桁で入力してください。")
+	//社員番号
+	@NotBlank(message = "新しい社員番号を入力してください。")
+	@Pattern(regexp = CommonConstants.EMPLOYEE_NUMBER, 
+			 message = "社員番号は半角数字3桁で入力してください。")
 	private String employeeNo;
 
-	@Pattern(regexp = CommonConstants.MAIL_REGEX, message = "メールアドレスの形式が正しくありません。メールアドレス形式で、半角英数字、および記号（._%+-）のみを使用して入力してください。")
-	@Size(max = 254, message = "メールアドレスは254文字以下で入力してください。")
+	//メールアドレス
+	@NotBlank(message = "新しいメールアドレスを入力してください。")
+	@Pattern(regexp = CommonConstants.MAIL_REGEX, 
+			 message = "メールアドレスの形式が正しくありません。メールアドレス形式で、半角英数字、および記号（._%+-）のみを使用して入力してください。")	
+	@Size(max = CommonConstants.MAIL_MAX_LENGTH, 
+	      message = "メールアドレスは{max}文字以下で入力してください。")
 	private String mail;
 
-	@Pattern(regexp = CommonConstants.DATE_REGEX, message = "入社日は半角数字YYYY/MM/DD形式で入力してください。")
+	//入社日
+	@NotBlank(message = "新しい入社日を入力してください。")
+	@Pattern(regexp = CommonConstants.DATE_REGEX, 
+			 message = "入社日は半角数字YYYY/MM/DD形式で入力してください。")
 	private String hireDate;
-
+	
+	//その他属性
 	private String employeeType;
 	private String departmentCategory;
 
