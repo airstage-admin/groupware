@@ -39,6 +39,8 @@ public final class CommonConstants {
     public static final int LOGIN_ID_MAX_LENGTH = 50; //ログインID最大文字数
     public static final int PASSWORD_MIN_LENGTH = 8; //パスワード最小文字数
     public static final int PASSWORD_MAX_LENGTH = 100; //パスワード最大文字数
+    public static final int NAME_MAX_LENGTH = 128; //氏名最大文字数
+    
 	
 	// SQL演算子
 	public static final String JUDGE_EQUAL = "=";
