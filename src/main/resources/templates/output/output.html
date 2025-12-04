@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>出力管理 - 社内グループウェア</title>
+<link rel="stylesheet" th:href="@{/css/output/output.css}"
+	type="text/css">
 </head>
 
 <body>
@@ -18,8 +20,8 @@
 			method="post" id="outputForm">
 
 			<div class="row">
-				<label>出力項目：</label>
-				<select id="outputItem" th:field="*{outputItem}">
+				<label>出力項目：</label> <select id="outputItem"
+					th:field="*{outputItem}">
 					<option th:each="type : ${reportTypes}" th:value="${type.code}"
 						th:text="${type.label}"></option>
 				</select>
@@ -40,7 +42,8 @@
 			<input type="hidden" id="isCheckOk" th:field="*{checkOk}" />
 		</form>
 	</div>
-	
+
 	<script th:src="@{/JavaScript/attendance/attendanceDateList.js}"></script>
+	<script th:src="@{/Javascript/output/output_paid_leave.js}"></script>
 </body>
 </html>
