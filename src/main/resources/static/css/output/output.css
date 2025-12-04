@@ -1,0 +1,26 @@
+/*
+ * output.html 専用スタイル
+ */
+.container {
+    padding: 0,20px;
+}
+
+.msg, .err {
+    margin-top: 20px;
+}
+
+#outputForm {
+    margin-top: 20px;
+}
+
+.row {
+    margin-bottom: 15px; 
+}
+
+.buttons button {
+    margin-right: 10px; 
+}
+
+.buttons button:last-child {
+    margin-right: 0;
+}
