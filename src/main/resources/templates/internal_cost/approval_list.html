@@ -192,43 +192,23 @@
             color: white;
         }
 
-        /* 統計カード */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
+        /* クリック可能な行 */
+        .clickable-row {
+            cursor: pointer;
         }
 
-        .stat-card {
-            background: #F8FAFC;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
+        .clickable-row:hover {
+            background: #EBF5FF;
         }
 
-        .stat-number {
-            font-size: 32px;
-            font-weight: 700;
-            color: #0052D4;
+        .btn-primary {
+            background: linear-gradient(135deg, #0052D4, #4364F7);
+            color: white;
         }
 
-        .stat-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        .stat-card.pending .stat-number {
-            color: #F59E0B;
-        }
-
-        .stat-card.approved .stat-number {
-            color: #10B981;
-        }
-
-        .stat-card.rejected .stat-number {
-            color: #EF4444;
+        .btn-primary:hover {
+            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.35);
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -242,22 +222,6 @@
             <div class="list-container">
                 <div class="list-header">
                     <h1 class="list-title">承認一覧</h1>
-                </div>
-
-                <!-- 統計カード -->
-                <div class="stats-row">
-                    <div class="stat-card pending">
-                        <div class="stat-number">5</div>
-                        <div class="stat-label">承認待ち</div>
-                    </div>
-                    <div class="stat-card approved">
-                        <div class="stat-number">23</div>
-                        <div class="stat-label">承認済み</div>
-                    </div>
-                    <div class="stat-card rejected">
-                        <div class="stat-number">2</div>
-                        <div class="stat-label">差し戻し</div>
-                    </div>
                 </div>
 
                 <!-- フィルター -->
@@ -281,6 +245,9 @@
                         <span>〜</span>
                         <input type="date" class="filter-input">
                     </div>
+                    <div class="filter-group">
+                        <button class="btn btn-primary" id="searchBtn">検索</button>
+                    </div>
                 </div>
 
                 <!-- 承認一覧テーブル -->
@@ -297,7 +264,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/12/04</td>
                             <td>FY2512040A01</td>
                             <td>山田 太郎</td>
@@ -306,13 +273,12 @@
                             <td><span class="status-badge pending">承認待ち</span></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-approve">承認</button>
-                                    <button class="btn btn-reject">差戻</button>
-                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                    <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
+                                    <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/12/03</td>
                             <td>FY2512030A02</td>
                             <td>佐藤 花子</td>
@@ -321,13 +287,12 @@
                             <td><span class="status-badge pending">承認待ち</span></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-approve">承認</button>
-                                    <button class="btn btn-reject">差戻</button>
-                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                    <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
+                                    <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/12/02</td>
                             <td>FY2512020A03</td>
                             <td>鈴木 一郎</td>
@@ -336,13 +301,12 @@
                             <td><span class="status-badge pending">承認待ち</span></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-approve">承認</button>
-                                    <button class="btn btn-reject">差戻</button>
-                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                    <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
+                                    <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/12/01</td>
                             <td>FY2512010A04</td>
                             <td>田中 美咲</td>
@@ -351,13 +315,12 @@
                             <td><span class="status-badge pending">承認待ち</span></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-approve">承認</button>
-                                    <button class="btn btn-reject">差戻</button>
-                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                    <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
+                                    <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/11/30</td>
                             <td>FY2511300A05</td>
                             <td>高橋 健太</td>
@@ -366,9 +329,8 @@
                             <td><span class="status-badge pending">承認待ち</span></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-approve">承認</button>
-                                    <button class="btn btn-reject">差戻</button>
-                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                    <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
+                                    <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
                                 </div>
                             </td>
                         </tr>

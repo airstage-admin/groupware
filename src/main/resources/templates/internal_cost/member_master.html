@@ -6,7 +6,6 @@
     <title>メンバーリスト管理マスタ - 経費精算システム</title>
     <link rel="stylesheet" th:href="@{/css/internal_cost/internal_cost.css}">
     <style>
-        /* マスタ管理画面用スタイル */
         .master-container {
             background: var(--bg-content);
             border-radius: 16px;
@@ -29,17 +28,12 @@
             color: var(--text-primary);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        /* 検索・フィルターエリア */
         .filter-area {
             display: flex;
             gap: 16px;
             margin-bottom: 24px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .filter-group {
@@ -48,14 +42,17 @@
             gap: 8px;
         }
 
+        .filter-group.search-btn {
+            margin-left: auto;
+        }
+
         .filter-label {
             font-size: 14px;
             color: var(--text-secondary);
             font-weight: 500;
         }
 
-        .filter-select,
-        .filter-input {
+        .filter-select {
             padding: 8px 12px;
             border: 2px solid #EEF2F7;
             border-radius: 8px;
@@ -63,8 +60,7 @@
             min-width: 150px;
         }
 
-        .filter-select:focus,
-        .filter-input:focus {
+        .filter-select:focus {
             outline: none;
             border-color: #0052D4;
         }
@@ -79,7 +75,6 @@
             background-size: 18px;
         }
 
-        /* テーブル */
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -106,7 +101,6 @@
             background: #F8FAFC;
         }
 
-        /* メンバーアバター */
         .member-cell {
             display: flex;
             align-items: center;
@@ -141,26 +135,6 @@
             color: var(--text-secondary);
         }
 
-        /* ステータスバッジ */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-badge.active {
-            background: #D1FAE5;
-            color: #065F46;
-        }
-
-        .status-badge.inactive {
-            background: #FEE2E2;
-            color: #991B1B;
-        }
-
-        /* 権限バッジ */
         .role-badge {
             display: inline-block;
             padding: 4px 10px;
@@ -182,12 +156,6 @@
         .role-badge.general {
             background: #E2E8F0;
             color: #64748B;
-        }
-
-        /* アクションボタン */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
         }
 
         .btn {
@@ -215,25 +183,6 @@
             transform: translateY(-1px);
         }
 
-        .btn-edit {
-            background: #EEF2F7;
-            color: var(--text-primary);
-        }
-
-        .btn-edit:hover {
-            background: #E2E8F0;
-        }
-
-        .btn-delete {
-            background: #FEE2E2;
-            color: #991B1B;
-        }
-
-        .btn-delete:hover {
-            background: #FECACA;
-        }
-
-        /* ページネーション */
         .pagination {
             display: flex;
             justify-content: center;
@@ -261,109 +210,18 @@
             border-color: #0052D4;
             color: white;
         }
-
-        /* モーダル */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            margin-bottom: 24px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid #EEF2F7;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .form-label.required::after {
-            content: " *";
-            color: #E17055;
-        }
-
-        .form-input,
-        .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #EEF2F7;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            background: white;
-        }
-
-        .form-input:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: #0052D4;
-            box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.1);
-        }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- ナビゲーションサイドバー -->
         <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
 
-        <!-- メインコンテンツ -->
         <main class="main-content">
             <div class="master-container">
                 <div class="master-header">
                     <h1 class="master-title">メンバーリスト管理マスタ</h1>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" onclick="openAddModal()">
-                            <span>➕</span>
-                            <span>メンバー追加</span>
-                        </button>
-                    </div>
                 </div>
 
-                <!-- 検索・フィルター -->
                 <div class="filter-area">
                     <div class="filter-group">
                         <input type="text" class="search-input" placeholder="名前・メールで検索">
@@ -387,17 +245,11 @@
                             <option value="general">一般</option>
                         </select>
                     </div>
-                    <div class="filter-group">
-                        <span class="filter-label">ステータス:</span>
-                        <select class="filter-select">
-                            <option value="">すべて</option>
-                            <option value="active">有効</option>
-                            <option value="inactive">無効</option>
-                        </select>
+                    <div class="filter-group search-btn">
+                        <button class="btn btn-primary">検索</button>
                     </div>
                 </div>
 
-                <!-- メンバーリストテーブル -->
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -405,8 +257,6 @@
                             <th>メンバー</th>
                             <th>部署</th>
                             <th>権限</th>
-                            <th>ステータス</th>
-                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -423,13 +273,6 @@
                             </td>
                             <td>開発部</td>
                             <td><span class="role-badge admin">管理者</span></td>
-                            <td><span class="status-badge active">有効</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-edit">編集</button>
-                                    <button class="btn btn-delete">削除</button>
-                                </div>
-                            </td>
                         </tr>
                         <tr>
                             <td>EMP002</td>
@@ -444,13 +287,6 @@
                             </td>
                             <td>経理部</td>
                             <td><span class="role-badge approver">承認者</span></td>
-                            <td><span class="status-badge active">有効</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-edit">編集</button>
-                                    <button class="btn btn-delete">削除</button>
-                                </div>
-                            </td>
                         </tr>
                         <tr>
                             <td>EMP003</td>
@@ -465,13 +301,6 @@
                             </td>
                             <td>営業部</td>
                             <td><span class="role-badge general">一般</span></td>
-                            <td><span class="status-badge active">有効</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-edit">編集</button>
-                                    <button class="btn btn-delete">削除</button>
-                                </div>
-                            </td>
                         </tr>
                         <tr>
                             <td>EMP004</td>
@@ -486,13 +315,6 @@
                             </td>
                             <td>人事部</td>
                             <td><span class="role-badge general">一般</span></td>
-                            <td><span class="status-badge active">有効</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-edit">編集</button>
-                                    <button class="btn btn-delete">削除</button>
-                                </div>
-                            </td>
                         </tr>
                         <tr>
                             <td>EMP005</td>
@@ -507,18 +329,10 @@
                             </td>
                             <td>開発部</td>
                             <td><span class="role-badge general">一般</span></td>
-                            <td><span class="status-badge inactive">無効</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-edit">編集</button>
-                                    <button class="btn btn-delete">削除</button>
-                                </div>
-                            </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <!-- ページネーション -->
                 <div class="pagination">
                     <button class="pagination-btn">«</button>
                     <button class="pagination-btn active">1</button>
@@ -529,76 +343,5 @@
             </div>
         </main>
     </div>
-
-    <!-- メンバー追加モーダル -->
-    <div class="modal-overlay" id="addMemberModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">メンバー追加</h2>
-            </div>
-            <form id="addMemberForm">
-                <div class="form-group">
-                    <label class="form-label required">社員番号</label>
-                    <input type="text" class="form-input" required placeholder="例: EMP006">
-                </div>
-                <div class="form-group">
-                    <label class="form-label required">氏名</label>
-                    <input type="text" class="form-input" required placeholder="例: 山田 太郎">
-                </div>
-                <div class="form-group">
-                    <label class="form-label required">メールアドレス</label>
-                    <input type="email" class="form-input" required placeholder="例: yamada@sample.co.jp">
-                </div>
-                <div class="form-group">
-                    <label class="form-label required">部署</label>
-                    <select class="form-select" required>
-                        <option value="">選択してください</option>
-                        <option value="sales">営業部</option>
-                        <option value="dev">開発部</option>
-                        <option value="hr">人事部</option>
-                        <option value="finance">経理部</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label required">権限</label>
-                    <select class="form-select" required>
-                        <option value="">選択してください</option>
-                        <option value="admin">管理者</option>
-                        <option value="approver">承認者</option>
-                        <option value="general">一般</option>
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-edit" onclick="closeAddModal()">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">追加する</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        function openAddModal() {
-            document.getElementById('addMemberModal').classList.add('active');
-        }
-
-        function closeAddModal() {
-            document.getElementById('addMemberModal').classList.remove('active');
-        }
-
-        document.getElementById('addMemberForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // TODO: サーバーに送信
-            alert('メンバーを追加しました');
-            closeAddModal();
-        });
-
-        // モーダル外クリックで閉じる
-        document.getElementById('addMemberModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeAddModal();
-            }
-        });
-    </script>
 </body>
 </html>
-

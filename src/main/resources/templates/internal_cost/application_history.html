@@ -194,34 +194,9 @@
             color: white;
         }
 
-        /* サマリーカード */
-        .summary-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .summary-card {
-            background: #F8FAFC;
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .summary-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .summary-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .summary-card.total .summary-value {
-            color: #0052D4;
+        /* クリック可能な行 */
+        .clickable-row {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -243,26 +218,6 @@
                     </div>
                 </div>
 
-                <!-- サマリー -->
-                <div class="summary-row">
-                    <div class="summary-card total">
-                        <div class="summary-label">今月の申請総額</div>
-                        <div class="summary-value">¥52,160</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">申請件数</div>
-                        <div class="summary-value">8件</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">承認済み</div>
-                        <div class="summary-value">5件</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">審査中</div>
-                        <div class="summary-value">3件</div>
-                    </div>
-                </div>
-
                 <!-- フィルター -->
                 <div class="filter-area">
                     <div class="filter-group">
@@ -272,7 +227,6 @@
                             <option value="pending">承認待ち</option>
                             <option value="approved">承認済み</option>
                             <option value="rejected">差し戻し</option>
-                            <option value="draft">下書き</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -292,6 +246,9 @@
                         <span>〜</span>
                         <input type="date" class="filter-input">
                     </div>
+                    <div class="filter-group">
+                        <button class="btn btn-primary" id="searchBtn">検索</button>
+                    </div>
                 </div>
 
                 <!-- 申請履歴テーブル -->
@@ -308,7 +265,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/12/04</td>
                             <td>FY2512040A01</td>
                             <td>旅費交通費</td>
@@ -317,7 +274,7 @@
                             <td>2025/12/03</td>
                             <td><span class="status-badge pending">承認待ち</span></td>
                         </tr>
-                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/12/02</td>
                             <td>FY2512020A02</td>
                             <td>消耗品費</td>
@@ -326,7 +283,7 @@
                             <td>2025/12/01</td>
                             <td><span class="status-badge approved">承認済み</span></td>
                         </tr>
-                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/11/28</td>
                             <td>FY2511280A03</td>
                             <td>会議費</td>
@@ -335,7 +292,7 @@
                             <td>2025/11/27</td>
                             <td><span class="status-badge approved">承認済み</span></td>
                         </tr>
-                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/11/25</td>
                             <td>FY2511250A04</td>
                             <td>通信費</td>
@@ -344,7 +301,7 @@
                             <td>2025/11/20</td>
                             <td><span class="status-badge rejected">差し戻し</span></td>
                         </tr>
-                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/11/20</td>
                             <td>FY2511200A05</td>
                             <td>旅費交通費</td>
@@ -353,7 +310,7 @@
                             <td>2025/11/18</td>
                             <td><span class="status-badge approved">承認済み</span></td>
                         </tr>
-                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/11/15</td>
                             <td>FY2511150A06</td>
                             <td>接待交際費</td>
@@ -362,7 +319,7 @@
                             <td>2025/11/14</td>
                             <td><span class="status-badge approved">承認済み</span></td>
                         </tr>
-                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
                             <td>2025/11/10</td>
                             <td>FY2511100A07</td>
                             <td>旅費交通費</td>
@@ -370,15 +327,6 @@
                             <td>¥2,400</td>
                             <td>2025/11/09</td>
                             <td><span class="status-badge approved">承認済み</span></td>
-                        </tr>
-                        <tr>
-                            <td>2025/11/08</td>
-                            <td>FY2511080A08</td>
-                            <td>消耗品費</td>
-                            <td>備品</td>
-                            <td>¥480</td>
-                            <td>—</td>
-                            <td><span class="status-badge draft">下書き</span></td>
                         </tr>
                     </tbody>
                 </table>

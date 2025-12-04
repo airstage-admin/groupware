@@ -6,7 +6,6 @@
     <title>会社情報管理マスタ - 経費精算システム</title>
     <link rel="stylesheet" th:href="@{/css/internal_cost/internal_cost.css}">
     <style>
-        /* マスタ管理画面用スタイル */
         .master-container {
             background: var(--bg-content);
             border-radius: 16px;
@@ -29,305 +28,75 @@
             color: var(--text-primary);
         }
 
-        /* フォームセクション */
-        .form-section {
-            margin-bottom: 32px;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #EEF2F7;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .form-grid.single {
-            grid-template-columns: 1fr;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .form-label.required::after {
-            content: " *";
-            color: #E17055;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
+        .info-table {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #EEF2F7;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            background: white;
+            border-collapse: collapse;
         }
 
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: #0052D4;
-            box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.1);
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* ボタン */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #0052D4, #4364F7);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.35);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: #EEF2F7;
-            color: var(--text-primary);
-        }
-
-        .btn-secondary:hover {
-            background: #E2E8F0;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid #EEF2F7;
-        }
-
-        /* 情報表示カード */
-        .info-card {
-            background: #F8FAFC;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        .info-card-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-
-        .info-row {
-            display: flex;
-            padding: 8px 0;
+        .info-table tr {
             border-bottom: 1px solid #EEF2F7;
         }
 
-        .info-row:last-child {
+        .info-table tr:last-child {
             border-bottom: none;
         }
 
-        .info-label {
-            width: 150px;
-            font-size: 14px;
+        .info-table th {
+            text-align: left;
+            padding: 16px 20px;
+            width: 200px;
+            font-weight: 600;
             color: var(--text-secondary);
+            font-size: 14px;
+            background: #F8FAFC;
+            vertical-align: top;
+        }
+
+        .info-table td {
+            padding: 16px 20px;
+            color: var(--text-primary);
+            font-size: 14px;
         }
 
         .info-value {
-            flex: 1;
-            font-size: 14px;
-            color: var(--text-primary);
             font-weight: 500;
+        }
+
+        .info-value.disabled {
+            color: var(--text-secondary);
+            background: #F1F5F9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- ナビゲーションサイドバー -->
         <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
 
-        <!-- メインコンテンツ -->
         <main class="main-content">
             <div class="master-container">
                 <div class="master-header">
                     <h1 class="master-title">会社情報管理マスタ</h1>
                 </div>
 
-                <!-- 現在の登録情報 -->
-                <div class="info-card">
-                    <div class="info-card-title">現在の登録情報</div>
-                    <div class="info-row">
-                        <span class="info-label">最終更新日</span>
-                        <span class="info-value">2025/11/15 14:30</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">更新者</span>
-                        <span class="info-value">管理者</span>
-                    </div>
-                </div>
-
-                <form id="companyForm">
-                    <!-- 基本情報 -->
-                    <div class="form-section">
-                        <h2 class="section-title">基本情報</h2>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label required">会社名</label>
-                                <input type="text" class="form-input" id="companyName" value="株式会社サンプル" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">会社名（カナ）</label>
-                                <input type="text" class="form-input" id="companyNameKana" value="カブシキガイシャサンプル">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label required">代表者名</label>
-                                <input type="text" class="form-input" id="representativeName" value="山田 太郎" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">設立年月日</label>
-                                <input type="date" class="form-input" id="establishedDate" value="2010-04-01">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">資本金</label>
-                                <input type="text" class="form-input" id="capital" value="10,000,000" placeholder="円">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">決算月</label>
-                                <select class="form-select" id="fiscalMonth">
-                                    <option value="1">1月</option>
-                                    <option value="2">2月</option>
-                                    <option value="3" selected>3月</option>
-                                    <option value="4">4月</option>
-                                    <option value="5">5月</option>
-                                    <option value="6">6月</option>
-                                    <option value="7">7月</option>
-                                    <option value="8">8月</option>
-                                    <option value="9">9月</option>
-                                    <option value="10">10月</option>
-                                    <option value="11">11月</option>
-                                    <option value="12">12月</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 連絡先情報 -->
-                    <div class="form-section">
-                        <h2 class="section-title">連絡先情報</h2>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label required">郵便番号</label>
-                                <input type="text" class="form-input" id="postalCode" value="100-0001" placeholder="000-0000" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label required">都道府県</label>
-                                <select class="form-select" id="prefecture" required>
-                                    <option value="">選択してください</option>
-                                    <option value="東京都" selected>東京都</option>
-                                    <option value="神奈川県">神奈川県</option>
-                                    <option value="大阪府">大阪府</option>
-                                    <!-- 他の都道府県 -->
-                                </select>
-                            </div>
-                            <div class="form-group full-width">
-                                <label class="form-label required">住所</label>
-                                <input type="text" class="form-input" id="address" value="千代田区丸の内1-1-1 サンプルビル5F" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label required">電話番号</label>
-                                <input type="tel" class="form-input" id="phone" value="03-1234-5678" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">FAX番号</label>
-                                <input type="tel" class="form-input" id="fax" value="03-1234-5679">
-                            </div>
-                            <div class="form-group full-width">
-                                <label class="form-label">メールアドレス</label>
-                                <input type="email" class="form-input" id="email" value="info@sample.co.jp">
-                            </div>
-                            <div class="form-group full-width">
-                                <label class="form-label">Webサイト</label>
-                                <input type="url" class="form-input" id="website" value="https://www.sample.co.jp">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 経理情報 -->
-                    <div class="form-section">
-                        <h2 class="section-title">経理情報</h2>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label">法人番号</label>
-                                <input type="text" class="form-input" id="corporateNumber" value="1234567890123" maxlength="13">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">インボイス登録番号</label>
-                                <input type="text" class="form-input" id="invoiceNumber" value="T1234567890123" placeholder="T + 13桁の数字">
-                            </div>
-                            <div class="form-group full-width">
-                                <label class="form-label">備考</label>
-                                <textarea class="form-textarea" id="remarks" placeholder="その他の情報があれば入力してください"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary">キャンセル</button>
-                        <button type="submit" class="btn btn-primary">保存する</button>
-                    </div>
-                </form>
+                <table class="info-table">
+                    <tr>
+                        <th>会社名</th>
+                        <td><span class="info-value disabled">株式会社サンプル</span></td>
+                    </tr>
+                    <tr>
+                        <th>事業開始月</th>
+                        <td><span class="info-value">4月</span></td>
+                    </tr>
+                    <tr>
+                        <th>事業終了月</th>
+                        <td><span class="info-value">3月</span></td>
+                    </tr>
+                </table>
             </div>
         </main>
     </div>
-
-    <script>
-        document.getElementById('companyForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // TODO: サーバーに送信
-            alert('会社情報を保存しました');
-        });
-    </script>
 </body>
 </html>
-
