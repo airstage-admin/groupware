@@ -8,12 +8,12 @@ public interface RecognizedIdService {
     /**
      * 識別用番号を生成する
      * 
-     * フォーマット: FY + 月(2桁) + ユーザーID(2桁) + アルファベット + 番号(2桁)
-     * 例: FY1201A01
+     * フォーマット: FY + 西暦下2桁 + 月(2桁) + 社員番号 + アルファベット + 番号(2桁)
+     * 例: FY2512999A01
      * 
-     * @param userId ユーザーID
+     * @param employeeNo 社員番号
      * @return 識別用番号
      */
-    String generate(int userId);
+    String generate(String employeeNo);
 }
 

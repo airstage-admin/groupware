@@ -424,14 +424,7 @@
         let currentStep = 1;
 
         // 識別用番号を生成
-        function generateCostId() {
-            const now = new Date();
-            const year = now.getFullYear().toString().slice(-2);
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const random = String(Math.floor(Math.random() * 100)).padStart(2, '0');
-            return `FY${year}${month}${day}0A${random}`;
-        }
+        // 識別用番号はサーバーから生成済み（th:value="${recognizedId}"）
 
         // 勘定科目選択
         document.querySelectorAll('.category-item').forEach(item => {
@@ -485,8 +478,7 @@
         document.getElementById('nextToStep2').addEventListener('click', function() {
             if (!selectedSubject) return;
 
-            // 識別用番号を生成
-            document.getElementById('costId').value = generateCostId();
+            // 識別用番号はサーバーで生成済み（変更不要）
 
             // 勘定科目をセット
             document.getElementById('selectedCategory').value = selectedSubject.name;

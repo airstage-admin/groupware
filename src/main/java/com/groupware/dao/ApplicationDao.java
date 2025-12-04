@@ -6,10 +6,10 @@ package com.groupware.dao;
  */
 public interface ApplicationDao {
     /**
-     * 指定ユーザーの今月の申請件数を取得
-     * @param userId ユーザーID
+     * 指定社員番号の今月の申請件数を取得
+     * @param employeeNo 社員番号
      * @return 今月の申請件数
      */
-    int countCurrentMonthApplications(int userId);
+    int countCurrentMonthApplications(String employeeNo);
 }
 

@@ -105,8 +105,8 @@ public class CostsController {
 		List<SubjectDto> subjects = subjectService.findAll();
 		model.addAttribute("subjects", subjects);
 
-		// 識別用番号を生成
-		String recognizedId = recognizedIdService.generate(loginUser.getId());
+		// 識別用番号を生成（社員番号で検索）
+		String recognizedId = recognizedIdService.generate(loginUser.getEmployeeNo());
 		model.addAttribute("recognizedId", recognizedId);
 
 		return "internal_cost/internal_cost_create";
