@@ -467,6 +467,13 @@ html, body {
     color: white;
 }
 
+/* Header Buttons */
+.header-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
 /* ============================================
    Tables
    ============================================ */

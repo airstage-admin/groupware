@@ -152,6 +152,10 @@
             <div class="master-container">
                 <div class="master-header">
                     <h1 class="master-title">プロジェクト管理マスタ</h1>
+                    <div class="header-buttons">
+                        <button class="btn btn-secondary">編集</button>
+                        <button class="btn btn-primary">追加</button>
+                    </div>
                 </div>
 
                 <div class="filter-area">
@@ -191,35 +195,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>PRJ001</td>
-                            <td>システム開発プロジェクトA</td>
-                            <td>開発部</td>
-                            <td><span class="status-badge active">進行中</span></td>
+                        <tr th:each="project : ${projects}">
+                            <td th:text="${project.code}"></td>
+                            <td th:text="${project.name}"></td>
+                            <td th:text="${project.department}"></td>
+                            <td><span class="status-badge active" th:text="${project.status}"></span></td>
                         </tr>
-                        <tr>
-                            <td>PRJ002</td>
-                            <td>営業支援システム導入</td>
-                            <td>営業部</td>
-                            <td><span class="status-badge active">進行中</span></td>
-                        </tr>
-                        <tr>
-                            <td>PRJ003</td>
-                            <td>社内研修プログラム</td>
-                            <td>人事部</td>
-                            <td><span class="status-badge completed">完了</span></td>
-                        </tr>
-                        <tr>
-                            <td>PRJ004</td>
-                            <td>クラウド移行プロジェクト</td>
-                            <td>開発部</td>
-                            <td><span class="status-badge active">進行中</span></td>
-                        </tr>
-                        <tr>
-                            <td>PRJ005</td>
-                            <td>顧客満足度向上施策</td>
-                            <td>営業部</td>
-                            <td><span class="status-badge inactive">休止中</span></td>
+                        <tr th:if="${#lists.isEmpty(projects)}">
+                            <td colspan="4" style="text-align: center; color: var(--text-secondary);">データがありません</td>
                         </tr>
                     </tbody>
                 </table>

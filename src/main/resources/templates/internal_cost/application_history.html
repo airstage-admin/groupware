@@ -165,40 +165,12 @@
             background: #E2E8F0;
         }
 
-        /* ページネーション */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 24px;
-        }
-
-        .pagination-btn {
-            padding: 8px 14px;
-            border: 2px solid #EEF2F7;
-            border-radius: 6px;
-            background: white;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .pagination-btn:hover {
-            border-color: #0052D4;
-            color: #0052D4;
-        }
-
-        .pagination-btn.active {
-            background: #0052D4;
-            border-color: #0052D4;
-            color: white;
-        }
-
         /* クリック可能な行 */
         .clickable-row {
             cursor: pointer;
         }
     </style>
+    <style th:replace="~{internal_cost/fragments/pagination :: paginationStyle}"></style>
 </head>
 <body>
     <div class="app-container">
@@ -258,87 +230,28 @@
                             <th>申請日</th>
                             <th>申請ID</th>
                             <th>勘定科目</th>
-                            <th>サブカテゴリ</th>
                             <th>金額</th>
-                            <th>購入日</th>
+                            <th>経費発生日</th>
                             <th>ステータス</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/12/04</td>
-                            <td>FY2512040A01</td>
-                            <td>旅費交通費</td>
-                            <td>常駐先への交通費</td>
-                            <td>¥620</td>
-                            <td>2025/12/03</td>
-                            <td><span class="status-badge pending">承認待ち</span></td>
+                        <tr th:each="history : ${histories}" class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                            <td th:text="${history.applyDate}"></td>
+                            <td th:text="${history.recognizedId}"></td>
+                            <td th:text="${history.subjectName}"></td>
+                            <td th:text="${'¥' + #numbers.formatInteger(history.price, 1, 'COMMA')}"></td>
+                            <td th:text="${history.purchasedDate}"></td>
+                            <td><span class="status-badge" th:classappend="${history.statusClass}" th:text="${history.statusName}"></span></td>
                         </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/12/02</td>
-                            <td>FY2512020A02</td>
-                            <td>消耗品費</td>
-                            <td>事務用品</td>
-                            <td>¥3,280</td>
-                            <td>2025/12/01</td>
-                            <td><span class="status-badge approved">承認済み</span></td>
-                        </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/11/28</td>
-                            <td>FY2511280A03</td>
-                            <td>会議費</td>
-                            <td>社外会議</td>
-                            <td>¥8,500</td>
-                            <td>2025/11/27</td>
-                            <td><span class="status-badge approved">承認済み</span></td>
-                        </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/11/25</td>
-                            <td>FY2511250A04</td>
-                            <td>通信費</td>
-                            <td>携帯電話料金</td>
-                            <td>¥2,980</td>
-                            <td>2025/11/20</td>
-                            <td><span class="status-badge rejected">差し戻し</span></td>
-                        </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/11/20</td>
-                            <td>FY2511200A05</td>
-                            <td>旅費交通費</td>
-                            <td>出張交通費</td>
-                            <td>¥15,400</td>
-                            <td>2025/11/18</td>
-                            <td><span class="status-badge approved">承認済み</span></td>
-                        </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/11/15</td>
-                            <td>FY2511150A06</td>
-                            <td>接待交際費</td>
-                            <td>接待飲食</td>
-                            <td>¥18,500</td>
-                            <td>2025/11/14</td>
-                            <td><span class="status-badge approved">承認済み</span></td>
-                        </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/11/10</td>
-                            <td>FY2511100A07</td>
-                            <td>旅費交通費</td>
-                            <td>タクシー代</td>
-                            <td>¥2,400</td>
-                            <td>2025/11/09</td>
-                            <td><span class="status-badge approved">承認済み</span></td>
+                        <tr th:if="${histories == null || #lists.isEmpty(histories)}">
+                            <td colspan="6" style="text-align: center; color: var(--text-secondary);">申請履歴がありません</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <!-- ページネーション -->
-                <div class="pagination">
-                    <button class="pagination-btn">«</button>
-                    <button class="pagination-btn active">1</button>
-                    <button class="pagination-btn">2</button>
-                    <button class="pagination-btn">3</button>
-                    <button class="pagination-btn">»</button>
-                </div>
+                <div th:replace="~{internal_cost/fragments/pagination :: pagination(currentPage=${currentPageNum}, totalPages=${totalPages}, baseUrl='/costs/history')}"></div>
             </div>
         </main>
     </div>

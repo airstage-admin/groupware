@@ -162,6 +162,10 @@
             <div class="master-container">
                 <div class="master-header">
                     <h1 class="master-title">勘定科目サブカテゴリ管理マスタ</h1>
+                    <div class="header-buttons">
+                        <button class="btn btn-secondary">編集</button>
+                        <button class="btn btn-primary">追加</button>
+                    </div>
                 </div>
 
                 <div class="filter-area">
@@ -194,53 +198,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>常駐先への交通費</td>
-                            <td><span class="parent-badge">旅費交通費</span></td>
-                            <td>クライアント承認済みの常駐先への交通費</td>
-                            <td><span class="status-badge active">有効</span></td>
+                        <tr th:each="subcategory : ${subcategories}">
+                            <td th:text="${subcategory.name}"></td>
+                            <td><span class="parent-badge" th:text="${subcategory.parentName}"></span></td>
+                            <td th:text="${subcategory.description}"></td>
+                            <td><span class="status-badge" th:classappend="${subcategory.active ? 'active' : 'inactive'}" th:text="${subcategory.active ? '有効' : '無効'}"></span></td>
                         </tr>
-                        <tr>
-                            <td>出張交通費</td>
-                            <td><span class="parent-badge">旅費交通費</span></td>
-                            <td>出張時の交通費</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>定期代</td>
-                            <td><span class="parent-badge">旅費交通費</span></td>
-                            <td>通勤定期券の費用</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>タクシー代</td>
-                            <td><span class="parent-badge">旅費交通費</span></td>
-                            <td>業務上必要なタクシー利用費</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>携帯電話料金</td>
-                            <td><span class="parent-badge">通信費</span></td>
-                            <td>業務用携帯電話の利用料金</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>事務用品</td>
-                            <td><span class="parent-badge">消耗品費</span></td>
-                            <td>文房具、オフィス用品等</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>社内会議</td>
-                            <td><span class="parent-badge">会議費</span></td>
-                            <td>社内での会議に関する費用</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>接待飲食</td>
-                            <td><span class="parent-badge">接待交際費</span></td>
-                            <td>取引先との接待飲食費用</td>
-                            <td><span class="status-badge inactive">無効</span></td>
+                        <tr th:if="${subcategories == null || #lists.isEmpty(subcategories)}">
+                            <td colspan="4" style="text-align: center; color: var(--text-secondary);">データがありません</td>
                         </tr>
                     </tbody>
                 </table>

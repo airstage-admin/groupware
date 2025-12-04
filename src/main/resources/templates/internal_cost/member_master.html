@@ -101,40 +101,6 @@
             background: #F8FAFC;
         }
 
-        .member-cell {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .member-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #0052D4, #4364F7);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .member-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .member-name {
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .member-email {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
         .role-badge {
             display: inline-block;
             padding: 4px 10px;
@@ -183,34 +149,8 @@
             transform: translateY(-1px);
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 24px;
-        }
-
-        .pagination-btn {
-            padding: 8px 14px;
-            border: 2px solid #EEF2F7;
-            border-radius: 6px;
-            background: white;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .pagination-btn:hover {
-            border-color: #0052D4;
-            color: #0052D4;
-        }
-
-        .pagination-btn.active {
-            background: #0052D4;
-            border-color: #0052D4;
-            color: white;
-        }
     </style>
+    <style th:replace="~{internal_cost/fragments/pagination :: paginationStyle}"></style>
 </head>
 <body>
     <div class="app-container">
@@ -220,6 +160,9 @@
             <div class="master-container">
                 <div class="master-header">
                     <h1 class="master-title">メンバーリスト管理マスタ</h1>
+                    <div class="header-buttons">
+                        <button class="btn btn-secondary">編集</button>
+                    </div>
                 </div>
 
                 <div class="filter-area">
@@ -260,86 +203,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>EMP001</td>
-                            <td>
-                                <div class="member-cell">
-                                    <div class="member-avatar">山</div>
-                                    <div class="member-info">
-                                        <span class="member-name">山田 太郎</span>
-                                        <span class="member-email">yamada@sample.co.jp</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>開発部</td>
-                            <td><span class="role-badge admin">管理者</span></td>
-                        </tr>
-                        <tr>
-                            <td>EMP002</td>
-                            <td>
-                                <div class="member-cell">
-                                    <div class="member-avatar">佐</div>
-                                    <div class="member-info">
-                                        <span class="member-name">佐藤 花子</span>
-                                        <span class="member-email">sato@sample.co.jp</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>経理部</td>
-                            <td><span class="role-badge approver">承認者</span></td>
-                        </tr>
-                        <tr>
-                            <td>EMP003</td>
-                            <td>
-                                <div class="member-cell">
-                                    <div class="member-avatar">鈴</div>
-                                    <div class="member-info">
-                                        <span class="member-name">鈴木 一郎</span>
-                                        <span class="member-email">suzuki@sample.co.jp</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>営業部</td>
+                        <tr th:each="member : ${members}">
+                            <td th:text="${member.employeeNo}"></td>
+                            <td th:text="${member.username}"></td>
+                            <td th:text="${departmentMap[member.department]}"></td>
                             <td><span class="role-badge general">一般</span></td>
                         </tr>
-                        <tr>
-                            <td>EMP004</td>
-                            <td>
-                                <div class="member-cell">
-                                    <div class="member-avatar">田</div>
-                                    <div class="member-info">
-                                        <span class="member-name">田中 美咲</span>
-                                        <span class="member-email">tanaka@sample.co.jp</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>人事部</td>
-                            <td><span class="role-badge general">一般</span></td>
-                        </tr>
-                        <tr>
-                            <td>EMP005</td>
-                            <td>
-                                <div class="member-cell">
-                                    <div class="member-avatar">高</div>
-                                    <div class="member-info">
-                                        <span class="member-name">高橋 健太</span>
-                                        <span class="member-email">takahashi@sample.co.jp</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>開発部</td>
-                            <td><span class="role-badge general">一般</span></td>
+                        <tr th:if="${#lists.isEmpty(members)}">
+                            <td colspan="4" style="text-align: center; color: var(--text-secondary);">データがありません</td>
                         </tr>
                     </tbody>
                 </table>
 
-                <div class="pagination">
-                    <button class="pagination-btn">«</button>
-                    <button class="pagination-btn active">1</button>
-                    <button class="pagination-btn">2</button>
-                    <button class="pagination-btn">3</button>
-                    <button class="pagination-btn">»</button>
-                </div>
+                <!-- ページネーション -->
+                <div th:replace="~{internal_cost/fragments/pagination :: pagination(currentPage=${currentPageNum}, totalPages=${totalPages}, baseUrl='/costs/member')}"></div>
             </div>
         </main>
     </div>

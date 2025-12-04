@@ -325,26 +325,17 @@
                 <div class="step-content active" id="step1">
                     <div class="category-label">選択してください</div>
                     <div class="category-list">
-                        <div class="category-item" data-category="travel" data-name="旅費交通費">
-                            <span class="category-name">旅費交通費</span>
-                        </div>
-                        <div class="category-item" data-category="communication" data-name="通信費">
-                            <span class="category-name">通信費</span>
-                        </div>
-                        <div class="category-item" data-category="supplies" data-name="消耗品費">
-                            <span class="category-name">消耗品費</span>
-                        </div>
-                        <div class="category-item" data-category="meeting" data-name="会議費">
-                            <span class="category-name">会議費</span>
-                        </div>
-                        <div class="category-item" data-category="entertainment" data-name="接待交際費">
-                            <span class="category-name">接待交際費</span>
+                        <div class="category-item" th:each="subject : ${subjects}" 
+                             th:data-id="${subject.id}" 
+                             th:data-name="${subject.name}"
+                             th:data-description="${subject.description}">
+                            <span class="category-name" th:text="${subject.name}"></span>
                         </div>
                     </div>
 
                     <div class="category-description" id="categoryDescription" style="display: none;">
-                        <div class="category-description-title" id="descriptionTitle">旅費交通費</div>
-                        <div class="category-description-text" id="descriptionText">従業員が業務のために通常の勤務地を離れて移動する際に発生する、電車・バス・タクシー代、宿泊費、出張手当などの費用を指します。</div>
+                        <div class="category-description-title" id="descriptionTitle"></div>
+                        <div class="category-description-text" id="descriptionText"></div>
                     </div>
 
                     <div class="create-footer">
@@ -364,13 +355,7 @@
                         <div class="form-group">
                             <label class="form-label">勘定科目</label>
                             <input type="text" class="form-input" id="selectedCategory" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label required">サブカテゴリ</label>
-                            <select class="form-select" id="subCategory" required>
-                                <option value="">選択してください</option>
-                            </select>
+                            <input type="hidden" id="selectedCategoryId">
                         </div>
 
                         <div class="form-row">
@@ -434,57 +419,8 @@
     </div>
 
     <script>
-        // 勘定科目の説明データ
-        const categoryDescriptions = {
-            travel: {
-                name: '旅費交通費',
-                description: '従業員が業務のために通常の勤務地を離れて移動する際に発生する、電車・バス・タクシー代、宿泊費、出張手当などの費用を指します。',
-                subCategories: [
-                    { value: 'regular', label: '常駐先への交通費（クライアント承認済）' },
-                    { value: 'business', label: '出張交通費' },
-                    { value: 'commute', label: '定期代' },
-                    { value: 'taxi', label: 'タクシー代' }
-                ]
-            },
-            communication: {
-                name: '通信費',
-                description: '業務で使用する電話、インターネット、郵便などの通信にかかる費用を指します。',
-                subCategories: [
-                    { value: 'phone', label: '携帯電話料金' },
-                    { value: 'internet', label: 'インターネット料金' },
-                    { value: 'postal', label: '郵送料' }
-                ]
-            },
-            supplies: {
-                name: '消耗品費',
-                description: '事務用品、文房具、備品など、短期間で消費される物品の購入費用を指します。',
-                subCategories: [
-                    { value: 'office', label: '事務用品' },
-                    { value: 'equipment', label: '備品' },
-                    { value: 'other', label: 'その他消耗品' }
-                ]
-            },
-            meeting: {
-                name: '会議費',
-                description: '社内外の会議で発生する飲食代、会場費などの費用を指します。',
-                subCategories: [
-                    { value: 'internal', label: '社内会議' },
-                    { value: 'external', label: '社外会議' },
-                    { value: 'venue', label: '会場費' }
-                ]
-            },
-            entertainment: {
-                name: '接待交際費',
-                description: '取引先や顧客との接待、贈答品などにかかる費用を指します。',
-                subCategories: [
-                    { value: 'meal', label: '接待飲食' },
-                    { value: 'gift', label: '贈答品' },
-                    { value: 'event', label: 'イベント費用' }
-                ]
-            }
-        };
-
-        let selectedCategory = null;
+        // 選択中の勘定科目データ
+        let selectedSubject = null;
         let currentStep = 1;
 
         // 識別用番号を生成
@@ -504,12 +440,17 @@
                 document.querySelectorAll('.category-item').forEach(i => i.classList.remove('selected'));
                 // 選択
                 this.classList.add('selected');
-                selectedCategory = this.dataset.category;
+                
+                // 選択した勘定科目データを保持
+                selectedSubject = {
+                    id: this.dataset.id,
+                    name: this.dataset.name,
+                    description: this.dataset.description || ''
+                };
 
                 // 説明を表示
-                const desc = categoryDescriptions[selectedCategory];
-                document.getElementById('descriptionTitle').textContent = desc.name + ':';
-                document.getElementById('descriptionText').textContent = desc.description;
+                document.getElementById('descriptionTitle').textContent = selectedSubject.name + ':';
+                document.getElementById('descriptionText').textContent = selectedSubject.description;
                 document.getElementById('categoryDescription').style.display = 'block';
 
                 // 次へボタンを有効化
@@ -542,23 +483,14 @@
 
         // ステップ1 → ステップ2
         document.getElementById('nextToStep2').addEventListener('click', function() {
-            if (!selectedCategory) return;
+            if (!selectedSubject) return;
 
             // 識別用番号を生成
             document.getElementById('costId').value = generateCostId();
 
             // 勘定科目をセット
-            document.getElementById('selectedCategory').value = categoryDescriptions[selectedCategory].name;
-
-            // サブカテゴリを更新
-            const subCategorySelect = document.getElementById('subCategory');
-            subCategorySelect.innerHTML = '<option value="">選択してください</option>';
-            categoryDescriptions[selectedCategory].subCategories.forEach(sub => {
-                const option = document.createElement('option');
-                option.value = sub.value;
-                option.textContent = sub.label;
-                subCategorySelect.appendChild(option);
-            });
+            document.getElementById('selectedCategory').value = selectedSubject.name;
+            document.getElementById('selectedCategoryId').value = selectedSubject.id;
 
             // 今日の日付をセット
             document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];

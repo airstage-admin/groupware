@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- ページネーション共通フラグメント -->
+<body>
+    <!-- ページネーション -->
+    <div class="pagination" th:fragment="pagination(currentPage, totalPages, baseUrl)" th:with="effectiveTotalPages=${totalPages != null && totalPages > 0 ? totalPages : 1}, effectiveCurrentPage=${currentPage != null && currentPage > 0 ? currentPage : 1}">
+        <!-- 前へ -->
+        <a th:href="${effectiveCurrentPage > 1} ? @{${baseUrl}(page=${effectiveCurrentPage - 1})} : '#'"
+           class="pagination-btn"
+           th:classappend="${effectiveCurrentPage <= 1} ? 'disabled' : ''">«</a>
+
+        <!-- ページ番号 -->
+        <th:block th:each="i : ${#numbers.sequence(1, effectiveTotalPages)}">
+            <!-- 表示するページ番号を制限（現在ページの前後2ページ + 最初と最後） -->
+            <a th:if="${i == 1 || i == effectiveTotalPages || (i >= effectiveCurrentPage - 2 && i <= effectiveCurrentPage + 2)}"
+               th:href="@{${baseUrl}(page=${i})}"
+               class="pagination-btn"
+               th:classappend="${i == effectiveCurrentPage} ? 'active' : ''"
+               th:text="${i}"></a>
+            <!-- 省略記号 -->
+            <span th:if="${i == effectiveCurrentPage - 3 && i > 1}" class="pagination-ellipsis">...</span>
+            <span th:if="${i == effectiveCurrentPage + 3 && i < effectiveTotalPages}" class="pagination-ellipsis">...</span>
+        </th:block>
+
+        <!-- 次へ -->
+        <a th:href="${effectiveCurrentPage < effectiveTotalPages} ? @{${baseUrl}(page=${effectiveCurrentPage + 1})} : '#'"
+           class="pagination-btn"
+           th:classappend="${effectiveCurrentPage >= effectiveTotalPages} ? 'disabled' : ''">»</a>
+    </div>
+
+    <!-- ページネーション用スタイル -->
+    <style th:fragment="paginationStyle">
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .pagination-btn {
+            padding: 8px 14px;
+            border: 2px solid #EEF2F7;
+            border-radius: 6px;
+            background: white;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .pagination-btn:hover:not(.disabled):not(.active) {
+            border-color: #0052D4;
+            color: #0052D4;
+        }
+
+        .pagination-btn.active {
+            background: #0052D4;
+            border-color: #0052D4;
+            color: white;
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .pagination-ellipsis {
+            padding: 8px 4px;
+            color: var(--text-secondary);
+        }
+    </style>
+</body>
+</html>
+

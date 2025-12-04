@@ -163,35 +163,6 @@
             background: #E2E8F0;
         }
 
-        /* ページネーション */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 24px;
-        }
-
-        .pagination-btn {
-            padding: 8px 14px;
-            border: 2px solid #EEF2F7;
-            border-radius: 6px;
-            background: white;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .pagination-btn:hover {
-            border-color: #0052D4;
-            color: #0052D4;
-        }
-
-        .pagination-btn.active {
-            background: #0052D4;
-            border-color: #0052D4;
-            color: white;
-        }
-
         /* クリック可能な行 */
         .clickable-row {
             cursor: pointer;
@@ -200,7 +171,9 @@
         .clickable-row:hover {
             background: #EBF5FF;
         }
-
+    </style>
+    <style th:replace="~{internal_cost/fragments/pagination :: paginationStyle}"></style>
+    <style>
         .btn-primary {
             background: linear-gradient(135deg, #0052D4, #4364F7);
             color: white;
@@ -264,87 +237,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/12/04</td>
-                            <td>FY2512040A01</td>
-                            <td>山田 太郎</td>
-                            <td>旅費交通費</td>
-                            <td>¥3,200</td>
-                            <td><span class="status-badge pending">承認待ち</span></td>
+                        <tr th:each="approval : ${approvals}" class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                            <td th:text="${approval.applyDate}"></td>
+                            <td th:text="${approval.recognizedId}"></td>
+                            <td th:text="${approval.applicantName}"></td>
+                            <td th:text="${approval.subjectName}"></td>
+                            <td th:text="${'¥' + #numbers.formatInteger(approval.price, 1, 'COMMA')}"></td>
+                            <td><span class="status-badge" th:classappend="${approval.statusClass}" th:text="${approval.statusName}"></span></td>
                             <td>
-                                <div class="action-buttons">
+                                <div class="action-buttons" th:if="${approval.statusClass == 'pending'}">
                                     <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
                                     <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
                                 </div>
                             </td>
                         </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/12/03</td>
-                            <td>FY2512030A02</td>
-                            <td>佐藤 花子</td>
-                            <td>消耗品費</td>
-                            <td>¥5,480</td>
-                            <td><span class="status-badge pending">承認待ち</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
-                                    <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/12/02</td>
-                            <td>FY2512020A03</td>
-                            <td>鈴木 一郎</td>
-                            <td>会議費</td>
-                            <td>¥12,000</td>
-                            <td><span class="status-badge pending">承認待ち</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
-                                    <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/12/01</td>
-                            <td>FY2512010A04</td>
-                            <td>田中 美咲</td>
-                            <td>接待交際費</td>
-                            <td>¥28,500</td>
-                            <td><span class="status-badge pending">承認待ち</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
-                                    <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="clickable-row" th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
-                            <td>2025/11/30</td>
-                            <td>FY2511300A05</td>
-                            <td>高橋 健太</td>
-                            <td>通信費</td>
-                            <td>¥2,980</td>
-                            <td><span class="status-badge pending">承認待ち</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-approve" onclick="event.stopPropagation();">承認</button>
-                                    <button class="btn btn-reject" onclick="event.stopPropagation();">差戻</button>
-                                </div>
-                            </td>
+                        <tr th:if="${approvals == null || #lists.isEmpty(approvals)}">
+                            <td colspan="7" style="text-align: center; color: var(--text-secondary);">承認待ちの申請がありません</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <!-- ページネーション -->
-                <div class="pagination">
-                    <button class="pagination-btn">«</button>
-                    <button class="pagination-btn active">1</button>
-                    <button class="pagination-btn">2</button>
-                    <button class="pagination-btn">3</button>
-                    <button class="pagination-btn">»</button>
-                </div>
+                <div th:replace="~{internal_cost/fragments/pagination :: pagination(currentPage=${currentPageNum}, totalPages=${totalPages}, baseUrl='/costs/approval')}"></div>
             </div>
         </main>
     </div>

@@ -67,42 +67,21 @@
                             <th>外部ID</th>
                             <th>勘定科目</th>
                             <th class="text-right">申請額</th>
-                            <th>購入日</th>
+                            <th>経費発生日</th>
                             <th>ステータス</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="clickable-row" th:data-href="@{/costs/detail}">
-                            <td>2025/11/28</td>
-                            <td>FY2511170A04</td>
-                            <td>交通費</td>
-                            <td class="text-right">¥480</td>
-                            <td>2025/11/25</td>
-                            <td><span class="status-badge pending">承認待ち</span></td>
+                        <tr th:each="application : ${applications}" class="clickable-row" th:data-href="@{/costs/detail}">
+                            <td th:text="${application.applyDate}"></td>
+                            <td th:text="${application.recognizedId}"></td>
+                            <td th:text="${application.subjectName}"></td>
+                            <td class="text-right amount" th:text="${'¥' + #numbers.formatInteger(application.price, 1, 'COMMA')}"></td>
+                            <td th:text="${application.purchasedDate}"></td>
+                            <td><span class="status-badge" th:classappend="${application.statusClass}" th:text="${application.statusName}"></span></td>
                         </tr>
-                        <tr class="clickable-row" th:data-href="@{/costs/detail}">
-                            <td>2025/11/26</td>
-                            <td>FY2511170A03</td>
-                            <td>交際費</td>
-                            <td class="text-right">¥30,280</td>
-                            <td>2025/11/19</td>
-                            <td><span class="status-badge approved">承認済み</span></td>
-                        </tr>
-                        <tr class="clickable-row" th:data-href="@{/costs/detail}">
-                            <td>2025/11/18</td>
-                            <td>FY2511170A02</td>
-                            <td>消耗品費</td>
-                            <td class="text-right">¥7,200</td>
-                            <td>2025/11/15</td>
-                            <td><span class="status-badge rejected">差し戻し</span></td>
-                        </tr>
-                        <tr class="clickable-row" th:data-href="@{/costs/detail}">
-                            <td>2025/11/08</td>
-                            <td>FY2511170A01</td>
-                            <td>交通費（定期代）</td>
-                            <td class="text-right">¥14,160</td>
-                            <td>2025/11/01</td>
-                            <td><span class="status-badge approved">承認済み</span></td>
+                        <tr th:if="${applications == null || #lists.isEmpty(applications)}">
+                            <td colspan="6" style="text-align: center; color: var(--text-secondary);">申請データがありません</td>
                         </tr>
                     </tbody>
                 </table>
@@ -184,6 +163,12 @@
         /* 右寄せ */
         .text-right {
             text-align: right;
+        }
+
+        /* 金額表示（右寄せ＋等幅数字） */
+        .amount {
+            font-variant-numeric: tabular-nums;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
     </style>
 

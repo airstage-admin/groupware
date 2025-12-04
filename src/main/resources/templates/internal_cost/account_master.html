@@ -142,6 +142,10 @@
             <div class="master-container">
                 <div class="master-header">
                     <h1 class="master-title">勘定科目管理マスタ</h1>
+                    <div class="header-buttons">
+                        <button class="btn btn-secondary">編集</button>
+                        <button class="btn btn-primary">追加</button>
+                    </div>
                 </div>
 
                 <div class="filter-area">
@@ -156,46 +160,15 @@
                         <tr>
                             <th>勘定科目名</th>
                             <th>説明</th>
-                            <th>サブカテゴリ数</th>
-                            <th>ステータス</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>旅費交通費</td>
-                            <td class="description-text">従業員が業務のために通常の勤務地を離れて移動する際に発生する費用</td>
-                            <td>4</td>
-                            <td><span class="status-badge active">有効</span></td>
+                        <tr th:each="subject : ${subjects}">
+                            <td th:text="${subject.name}"></td>
+                            <td class="description-text" th:text="${subject.description}"></td>
                         </tr>
-                        <tr>
-                            <td>通信費</td>
-                            <td class="description-text">業務で使用する電話、インターネット、郵便などの通信にかかる費用</td>
-                            <td>3</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>消耗品費</td>
-                            <td class="description-text">事務用品、文房具、備品など、短期間で消費される物品の購入費用</td>
-                            <td>3</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>会議費</td>
-                            <td class="description-text">社内外の会議で発生する飲食代、会場費などの費用</td>
-                            <td>3</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>接待交際費</td>
-                            <td class="description-text">取引先や顧客との接待、贈答品などにかかる費用</td>
-                            <td>3</td>
-                            <td><span class="status-badge active">有効</span></td>
-                        </tr>
-                        <tr>
-                            <td>図書研修費</td>
-                            <td class="description-text">書籍購入、セミナー参加費、資格取得費用など</td>
-                            <td>2</td>
-                            <td><span class="status-badge inactive">無効</span></td>
+                        <tr th:if="${#lists.isEmpty(subjects)}">
+                            <td colspan="2" style="text-align: center; color: var(--text-secondary);">データがありません</td>
                         </tr>
                     </tbody>
                 </table>
