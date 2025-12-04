@@ -63,4 +63,9 @@ public final class CommonConstants {
 	public static final String HYPHEN_FORMAT = "-"; // 日付フォーマット変換用
 	
 	public static final int UNSELECTED_CODE = 0; // 部署未選択コード
+	
+	// バッチ名称
+	public static final String ATTENDANCE_CREATE_BATCH = "AttendanceCreateBatch"; // 勤怠管理簿作成処理バッチ
+	public static final String PAID_ACQUISITION_BATCH = "PaidAcquisitionBatch"; // 有給取得処理バッチ
+	public static final String PAID_GRANT_BATCH = "PaidGrantBatch"; // 有給付与処理バッチ
 }
