@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -318,10 +319,18 @@ public class AttendanceController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CommonConstants.TIME_FORMAT);
 		dto.setId(form.getId());
 		dto.setUserId(form.getUserId());
-		dto.setPlaceWork(Integer.parseInt(form.getPlaceWork()));
+		
+		if (form.getPlaceWork() != null && !form.getPlaceWork().isEmpty()) {
+			dto.setPlaceWork(Integer.parseInt(form.getPlaceWork()));
+		} else {
+			dto.setPlaceWork(CommonConstants.UNSELECTED_CODE); // 値がない場合は 0 (未選択) をセット
+		}
+		
 		dto.setPlaceWorkName(form.getPlaceWorkName());
 		dto.setClockIn(form.getClockIn());
 		dto.setClockOut(form.getClockOut());
+		
+		
 		try {
 			dto.setBreakTime(LocalTime.parse(form.getBreakTime(), formatter));
 		} catch (Exception e) {
@@ -332,7 +341,14 @@ public class AttendanceController {
 		} catch (Exception e) {
 			dto.setNightBreakTime(LocalTime.parse(CommonConstants.INIT_TIME, formatter));
 		}
-		dto.setVacationCategory(Integer.parseInt(form.getVacationCategory()));
+		
+		if (form.getVacationCategory() != null && !form.getVacationCategory().isEmpty()) {
+			dto.setVacationCategory(Integer.parseInt(form.getVacationCategory()));
+		} else {
+			dto.setVacationCategory(CommonConstants.UNSELECTED_CODE); // 値がない場合は 0 (なし) をセット
+		}
+
+		dto.setVacationNote(form.getVacationNote());
 		dto.setVacationNote(form.getVacationNote());
 
 		return dto;
@@ -425,4 +441,64 @@ public class AttendanceController {
 				? YearMonth.parse(yearMonthCookieValue)
 				: YearMonth.now();
 	}
+	
+	/**
+	 * 勤怠情報の初期化更新を行う
+	 * 
+	 * @param form 勤怠入力フォーム（対象ID保持）
+	 * @param session セッション
+	 * @param response レスポンス
+	 * @param model モデル
+	 * @return 処理成功時は勤怠一覧へリダイレクト、エラー時は編集画面へ戻る
+	 */
+    @PostMapping(value = "/attendance_submit", params = "action=reset")
+    public String attendanceSubmitReset(
+            @ModelAttribute("attendance") AttendanceForm form,
+            HttpSession session, 
+            HttpServletResponse response,
+            Model model) {
+        
+        UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "redirect:/index";
+        }
+        UserDto userAdminDto = (UserDto) session.getAttribute("adminLoginUser");
+        int updateId = (userAdminDto != null) ? userAdminDto.getId() : loginUser.getId();
+
+        try {
+            AttendanceDto currentDto = attendanceService.findById(form.getId());
+            
+            AttendanceDto resetDto = new AttendanceDto();
+            resetDto.setId(form.getId());
+            resetDto.setUserId(loginUser.getId());
+            
+            resetDto.setPlaceWork(currentDto.getPlaceWork());
+            
+            // --- 以下はリセット（初期値）にする項目 ---
+            
+            resetDto.setPlaceWorkName(null); 
+            resetDto.setClockIn(CommonConstants.INIT_TIME);
+            resetDto.setClockOut(CommonConstants.INIT_TIME);
+            
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CommonConstants.TIME_FORMAT);
+            resetDto.setBreakTime(LocalTime.parse(CommonConstants.INIT_TIME, formatter));
+            resetDto.setNightBreakTime(LocalTime.parse(CommonConstants.INIT_TIME, formatter));
+            
+            resetDto.setVacationCategory(CommonConstants.UNSELECTED_CODE);
+            resetDto.setVacationNote(null);
+
+            // 更新実行
+            attendanceService.update(resetDto, updateId);
+
+        } catch (Exception e) {
+            model.addAttribute("message", "初期化更新でエラーが発生しました。");
+            model.addAttribute("user", loginUser);
+            return "/attendance/attendance_edit";
+        }
+
+        model.addAttribute("user", loginUser);
+        session.setAttribute("loginUser", loginUser);
+        return "redirect:/attendance_calendar";
+    }
+	
 }

@@ -1,35 +1,51 @@
 package com.groupware.attendance.form;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import com.groupware.attendance.validation.BreakTimeCheck;
 import com.groupware.attendance.validation.ClockOrderCheck;
+import com.groupware.attendance.validation.NightBreakCheck;
 import com.groupware.common.constant.CommonConstants;
 
 @ClockOrderCheck
+@NightBreakCheck
+@BreakTimeCheck 
 public class AttendanceForm {
 	private Long id;
 	private int userId;
 	private String workingDay;
 	private String placeWork;
 
-	@Size(max = 256, message = "勤務場所名は256文字以内で入力してください。")
+	//勤務場所
+	@Size(max = CommonConstants.PLACE_WORK_NAME_MAX_LENGTH, 
+	      message = "勤務場所名は{max}文字以内で入力してください。")
 	private String placeWorkName;
 
-	@Pattern(regexp = CommonConstants.CLOCK_REGEX, message = "出勤時刻を正しく入力してください。")
+	//出勤時刻
+	@NotBlank(message = "出勤時刻を入力してください。")
+	@Pattern(regexp = CommonConstants.CLOCK_REGEX, message = "出勤時刻は0:00~31:59の値で入力してください。")
 	private String clockIn;
-
-	@Pattern(regexp = CommonConstants.CLOCK_REGEX, message = "退勤時刻を正しく入力してください。")
+	
+	//退勤時刻
+	@NotBlank(message = "退勤時刻を入力してください。")
+	@Pattern(regexp = CommonConstants.CLOCK_REGEX, message = "退勤時刻は0:00~31:59の値で入力してください。")
 	private String clockOut;
 
-	@Pattern(regexp = CommonConstants.BREAK_REGEX, message = "休憩時刻を正しく入力してください。")
-	private String breakTime;
+	//休憩時間
+	@NotBlank(message = "休憩時間を入力してください。")
+    @Pattern(regexp = CommonConstants.BREAK_RANGE_REGEX, message = "休憩時間は0:00~10:00の値で入力してください。")
+    @Pattern(regexp = CommonConstants.BREAK_INTERVAL_REGEX, message = "休憩時間は15分単位で記入してください。")
+    private String breakTime;
 
-	@Pattern(regexp = CommonConstants.BREAK_REGEX, message = "深夜休憩時刻を正しく入力してください。")
+	//深夜休憩時間
+	@Pattern(regexp = CommonConstants.NIGHT_BREAK_RANGE_REGEX, message = "深夜休憩時間は0:00~7:00の値で入力してください。")
+	@Pattern(regexp = CommonConstants.BREAK_INTERVAL_REGEX, message = "深夜休憩時間は15分単位で記入してください。")
 	private String nightBreakTime;
-
+	
+	//その他属性
 	private String vacationCategory;
-
 	private String vacationNote;
 
 	// ==========================================================
