@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.groupware.common.registry.DepartmentRegistry;
 import com.groupware.costs.service.MemberService;
+import com.groupware.costs.service.RecognizedIdService;
 import com.groupware.costs.service.SubjectService;
 import com.groupware.dto.SubjectDto;
 import com.groupware.dto.UserDto;
@@ -23,6 +24,9 @@ public class CostsController {
 
 	@Autowired
 	private MemberService memberService;
+
+	@Autowired
+	private RecognizedIdService recognizedIdService;
 	/**
 	* 一般ユーザー・経費精算ホーム画面表示処理（POST用）
 	*
@@ -100,6 +104,10 @@ public class CostsController {
 		// 勘定科目一覧を取得
 		List<SubjectDto> subjects = subjectService.findAll();
 		model.addAttribute("subjects", subjects);
+
+		// 識別用番号を生成
+		String recognizedId = recognizedIdService.generate(loginUser.getId());
+		model.addAttribute("recognizedId", recognizedId);
 
 		return "internal_cost/internal_cost_create";
 	}
