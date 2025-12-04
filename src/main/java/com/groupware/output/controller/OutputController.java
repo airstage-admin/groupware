@@ -29,7 +29,7 @@ import com.groupware.output.service.OutputService;
 public class OutputController {
 
 	private static final Logger logger = LoggerFactory.getLogger(OutputController.class);
-	
+
 	@Autowired
 	private OutputService outputService;
 
@@ -86,7 +86,7 @@ public class OutputController {
 		case "home":
 			// HOME画面へ遷移
 			return "redirect:/userflow/home";
-			
+
 		default:
 			logger.warn("想定外のアクションが指定されました: {}", action);
 			break;
@@ -109,34 +109,34 @@ public class OutputController {
 	 */
 	private void executeOutput(OutputForm form) {
 		logger.info("出力処理開始: 年月={}", form.getTargetYearMonth());
-		
-	    try {
 
-		switch (form.getOutputItem()) {
-		case "attendance":
-			//ここに勤怠管理の出力ロジックを実装してください
-			break;
-			
-		case "paid_leave":
-			//ここに有給管理簿の出力ロジックを実装してください
-			break;
-			
-		case "internal_pj":
-			form.setOutputItem("社内PJ"); 
-			String msg = outputService.createExcelOutput(form);
-			logger.info("出力完了: " + msg);
-			break;
-			
-		case "study":
-			//ここに勉強会の出力ロジックを実装してください
-			break;
-			
-		default:
-			logger.warn("未定義の出力項目が指定されました: {}", form.getOutputItem());
-			break;
-		} 
-	    }catch (Exception e) {
-		logger.error("出力エラー", e);
-    }
-}
+		try {
+
+			switch (form.getOutputItem()) {
+			case "attendance":
+				//ここに勤怠管理の出力ロジックを実装してください
+				break;
+
+			case "paid_leave":
+				//ここに有給管理簿の出力ロジックを実装してください
+				break;
+
+			case "internal_pj":
+				form.setOutputItem("社内PJ");
+				String msg = outputService.createInternalProjectExcel(form);
+				logger.info("出力完了: " + msg);
+				break;
+
+			case "study":
+				//ここに勉強会の出力ロジックを実装してください
+				break;
+
+			default:
+				logger.warn("未定義の出力項目が指定されました: {}", form.getOutputItem());
+				break;
+			}
+		} catch (Exception e) {
+			logger.error("出力エラー", e);
+		}
+	}
 }
