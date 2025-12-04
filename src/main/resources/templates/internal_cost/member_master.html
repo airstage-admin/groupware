@@ -202,12 +202,22 @@
                             <th>権限</th>
                         </tr>
                     </thead>
-                    <tbody>
+					<tbody>
                         <tr th:each="member : ${members}">
                             <td th:text="${member.employeeNo}"></td>
                             <td th:text="${member.username}"></td>
                             <td th:text="${departmentMap[member.department]}"></td>
-                            <td><span class="role-badge general">一般</span></td>
+                            <td>
+                                <th:block th:with="roleCode=${userRoleMap[member.id] ?: 1}">
+                                    <span th:switch="${roleCode}">
+                                        <span th:case="3" class="role-badge approver">決裁者</span>
+
+                                        <span th:case="2" class="role-badge admin">管理者</span>
+
+                                        <span th:case="1" class="role-badge general">一般</span>
+                                    </span>
+                                </th:block>
+                            </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(members)}">
                             <td colspan="4" style="text-align: center; color: var(--text-secondary);">データがありません</td>

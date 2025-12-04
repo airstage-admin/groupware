@@ -9,11 +9,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
+
+import com.groupware.common.enums.RoleType;
 import com.groupware.common.registry.DepartmentRegistry;
 import com.groupware.costs.service.MemberService;
 import com.groupware.costs.service.RecognizedIdService;
 import com.groupware.costs.service.SubjectService;
+import com.groupware.dao.ExtendRoleDao;
 import com.groupware.dto.SubjectDto;
 import com.groupware.dto.UserDto;
 
@@ -27,6 +32,9 @@ public class CostsController {
 
 	@Autowired
 	private RecognizedIdService recognizedIdService;
+
+	@Autowired
+	private ExtendRoleDao extendRoleDao;
 	/**
 	* 一般ユーザー・経費精算ホーム画面表示処理（POST用）
 	*
@@ -158,7 +166,10 @@ public class CostsController {
 	* メンバーリスト管理マスタ画面表示処理（GET用）
 	*/
 	@GetMapping("/costs/member")
-	public String getMemberMaster(HttpSession session, Model model) {
+	public String getMemberMaster(
+			HttpSession session, 
+			Model model,
+			@RequestParam(value = "page", defaultValue = "1") int page) {
 		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
 		if (loginUser == null) {
 			return "redirect:/index";
@@ -167,11 +178,33 @@ public class CostsController {
 		model.addAttribute("currentPage", "member");
 
 		// メンバー一覧を取得
-		List<UserDto> members = memberService.findAll();
+		List<UserDto> allMembers = memberService.findAll();
+		
+		// ページネーション処理（10件ずつ）
+		int pageSize = 10;
+		int totalItems = allMembers.size();
+		int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+		
+		// ページ番号の補正
+		if (page < 1) page = 1;
+		if (page > totalPages && totalPages > 0) page = totalPages;
+		
+		// ページングされたリストを取得
+		int start = (page - 1) * pageSize;
+		int end = Math.min(start + pageSize, totalItems);
+		List<UserDto> members = allMembers.subList(start, end);
+		
 		model.addAttribute("members", members);
+		model.addAttribute("currentPageNum", page);
+		model.addAttribute("totalPages", totalPages);
 
 		// 部署マップを取得
 		model.addAttribute("departmentMap", DepartmentRegistry.departmentTypeSelectSet(false));
+
+		// 権限マップを取得（extend_role優先、なければdepartment_typeのis_adminを確認）
+		Map<Integer, Integer> userRoleMap = extendRoleDao.findAllEffectiveRoles();
+		model.addAttribute("userRoleMap", userRoleMap);
+		model.addAttribute("roleMap", RoleType.getRoleMap());
 
 		return "internal_cost/member_master";
 	}
