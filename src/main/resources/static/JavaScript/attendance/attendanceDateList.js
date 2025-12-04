@@ -55,13 +55,29 @@ function generateMonthYearOptions() {
 	const pmYear = prevMonthDate.getFullYear();
 	const pmMonth = prevMonthDate.getMonth() + 1;
     
-    // クッキーがなければ、当月をデフォルト値とする
-    const currentMonthYear = `${pmYear}-${String(pmMonth).padStart(2, '0')}`;
-    const defaultMonthYear = lastSelected || currentMonthYear;
+	let defaultMonthYear;
+	let startDate;
+	let endDate;
+	let currentMonthYear;
+	const currentPath = window.location.pathname;
 
-    // 選択範囲の計算 (前1年～今月)
-    const startDate = new Date(currentYear, currentMonth - 12); // 12ヶ月前
-    const endDate = new Date(currentYear, currentMonth -1);   // 前月
+	if (currentPath === '/attendance_calendar') {
+		// 社員側画面の場合は、クッキーがなければ当月をデフォルト値とする
+		currentMonthYear = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+		defaultMonthYear = lastSelected || currentMonthYear;
+
+		// 選択範囲の計算 (前1年～今月)
+		startDate = new Date(currentYear, currentMonth - 12); // 12ヶ月前
+		endDate = new Date(currentYear, currentMonth); // 今月
+	} else {
+		// 管理者側画面の場合は、クッキーがなければ前月をデフォルト値とする
+		currentMonthYear = `${pmYear}-${String(pmMonth).padStart(2, '0')}`;
+	    defaultMonthYear = lastSelected || currentMonthYear;
+
+		// 選択範囲の計算 (前1年～前月)
+		startDate = new Date(currentYear, currentMonth - 12); // 12ヶ月前
+		endDate = new Date(currentYear, currentMonth -1);   // 前月
+	}
 
     // オプションの生成と**一時配列への追加**
     let iterDate = new Date(startDate.getFullYear(), startDate.getMonth());
