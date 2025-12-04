@@ -65,6 +65,14 @@ public final class ExcelOutputUtiles {
 			style = createCellStyle(workbook, data);
 			cell.setCellStyle(style);
 		}
+		
+		   //幅調整
+			java.util.stream.IntStream.range(0, 10).forEach(i -> {
+			sheet.autoSizeColumn(i);
+
+			int currentWidth = sheet.getColumnWidth(i);
+			sheet.setColumnWidth(i, (int) (currentWidth * 2));
+			});
 
 		// ファイルパスの決定 (Windowsのダウンロードフォルダ)
 		Path downloadPath = getWindowsDownloadFolder();
@@ -116,4 +124,5 @@ public final class ExcelOutputUtiles {
 		}
 		return FileSystems.getDefault().getPath(home, DOWNLOAD);
 	}
+	
 }
