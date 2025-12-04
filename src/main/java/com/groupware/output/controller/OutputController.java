@@ -41,8 +41,6 @@ public class OutputController {
 			return "redirect:/index";
 		}
 
-		logger.info("GET /output : 出力管理画面を表示します。");
-
 		//初期値設定
 		if (form.getTargetYearMonth() == null) {
 			form.setTargetYearMonth(YearMonth.now().minusMonths(1).toString());
@@ -69,8 +67,6 @@ public class OutputController {
 			return "redirect:/index";
 		}
 
-		logger.info("POST /output_submit : action={}", action);
-
 		switch (action) {
 		case "check":
 			// 勤怠確認処理
@@ -85,6 +81,10 @@ public class OutputController {
 		case "home":
 			// HOME画面へ遷移
 			return "redirect:/userflow/home";
+			
+		default:
+			logger.warn("想定外のアクションが指定されました: {}", action);
+			break;
 		}
 
 		redirectAttributes.addFlashAttribute("outputForm", form);
@@ -107,49 +107,24 @@ public class OutputController {
 
 		switch (form.getOutputItem()) {
 		case "attendance":
-			executeOutputAttendance(form);
+			//ここに勤怠管理の出力ロジックを実装してください
 			break;
+			
 		case "paid_leave":
-			executeOutputPaidLeave(form);
+			//ここに有給管理簿の出力ロジックを実装してください
 			break;
+			
 		case "internal_pj":
-			executeOutputInternalPj(form);
+			//ここに社内PJの出力ロジックを実装してください
 			break;
+			
 		case "study":
-			executeOutputStudy(form);
+			//ここに勉強会の出力ロジックを実装してください
+			break;
+			
+		default:
+			logger.warn("未定義の出力項目が指定されました: {}", form.getOutputItem());
 			break;
 		}
-	}
-
-	/**
-	 * ファイル出力処理：勤怠管理表
-	 */
-	private void executeOutputAttendance(OutputForm form) {
-		logger.info("-> 勤怠管理表の出力処理を実行します。");
-		//ここに勤怠管理の出力ロジックを実装してください
-	}
-
-	/**
-	 * ファイル出力処理：有給管理簿
-	 */
-	private void executeOutputPaidLeave(OutputForm form) {
-		logger.info("-> 有給管理簿の出力処理を実行します。");
-		//ここに有給管理簿の出力ロジックを実装してください
-	}
-
-	/**
-	 * ファイル出力処理：社内PJ
-	 */
-	private void executeOutputInternalPj(OutputForm form) {
-		logger.info("-> 社内PJの出力処理を実行します。");
-		//ここに社内PJの出力ロジックを実装してください
-	}
-
-	/**
-	 * ファイル出力処理：勉強会参加
-	 */
-	private void executeOutputStudy(OutputForm form) {
-		logger.info("-> 勉強会の出力処理を実行します。");
-		//ここに勉強会の出力ロジックを実装してください
 	}
 }
