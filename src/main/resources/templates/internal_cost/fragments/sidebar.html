@@ -38,6 +38,46 @@
                     <span class="nav-item-badge">3</span>
                 </a>
             </div>
+
+            <!-- 承認一覧画面 -->
+            <div class="nav-section">
+                <div class="nav-section-title">承認一覧画面</div>
+
+                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''"　th:href="@{/costs/new}">
+                    <span class="nav-item-icon">➕</span>
+                    <span class="nav-item-text">承認一覧画面</span>
+                </a>
+            </div>
+
+            <!-- 管理画面 -->
+            <div class="nav-section">
+                <div class="nav-section-title">管理画面</div>
+
+                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
+                    <span class="nav-item-icon">🏠</span>
+                    <span class="nav-item-text">会社情報管理画マスタ</span>
+                </a>
+
+                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
+                    <span class="nav-item-icon">🏠</span>
+                    <span class="nav-item-text">メンバーリスト管理マスタ</span>
+                </a>
+
+                 <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
+                    <span class="nav-item-icon">🏠</span>
+                    <span class="nav-item-text">勘定科目管理マスタ</span>
+                </a>
+
+                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
+                    <span class="nav-item-icon">🏠</span>
+                    <span class="nav-item-text">勘定科目サブカテゴリ管理マスタ</span>
+                </a>
+
+                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
+                    <span class="nav-item-icon">🏠</span>
+                    <span class="nav-item-text">プロジェクト管理マスタ</span>
+                </a>
+            </div>
         </div>
 
         <!-- ユーザー情報 -->
