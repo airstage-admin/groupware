@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロジェクト管理マスタ - 経費精算システム</title>
+    <link rel="stylesheet" th:href="@{/css/internal_cost/internal_cost.css}">
+    <style>
+        .master-container {
+            background: var(--bg-content);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 32px;
+        }
+
+        .master-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .master-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-area {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 150px;
+        }
+
+        .search-input {
+            padding: 8px 12px 8px 36px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 250px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23636E72' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 10px center;
+            background-size: 18px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead th {
+            background: #F8FAFC;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid #EEF2F7;
+        }
+
+        .data-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.completed {
+            background: #E2E8F0;
+            color: #64748B;
+        }
+
+        .status-badge.inactive {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 8px;
+            background: #EEF2F7;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #0052D4, #4364F7);
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0052D4, #4364F7);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.35);
+        }
+
+        .btn-edit {
+            background: #EEF2F7;
+            color: var(--text-primary);
+        }
+
+        .btn-edit:hover {
+            background: #E2E8F0;
+        }
+
+        .btn-delete {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .btn-delete:hover {
+            background: #FECACA;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #EEF2F7;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: " *";
+            color: #E17055;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #0052D4;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .budget-display {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0052D4;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
+
+        <main class="main-content">
+            <div class="master-container">
+                <div class="master-header">
+                    <h1 class="master-title">プロジェクト管理マスタ</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <span>➕</span>
+                            <span>プロジェクト追加</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-area">
+                    <div class="filter-group">
+                        <input type="text" class="search-input" placeholder="プロジェクト名で検索">
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">ステータス:</span>
+                        <select class="filter-select">
+                            <option value="">すべて</option>
+                            <option value="active">進行中</option>
+                            <option value="completed">完了</option>
+                            <option value="inactive">休止中</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">担当部署:</span>
+                        <select class="filter-select">
+                            <option value="">すべて</option>
+                            <option value="sales">営業部</option>
+                            <option value="dev">開発部</option>
+                            <option value="hr">人事部</option>
+                        </select>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>プロジェクトコード</th>
+                            <th>プロジェクト名</th>
+                            <th>担当部署</th>
+                            <th>予算</th>
+                            <th>消化率</th>
+                            <th>期間</th>
+                            <th>ステータス</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PRJ001</td>
+                            <td>システム開発プロジェクトA</td>
+                            <td>開発部</td>
+                            <td class="budget-display">¥5,000,000</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 65%"></div>
+                                </div>
+                                <div class="progress-text">65% 消化</div>
+                            </td>
+                            <td>2025/04 〜 2026/03</td>
+                            <td><span class="status-badge active">進行中</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PRJ002</td>
+                            <td>営業支援システム導入</td>
+                            <td>営業部</td>
+                            <td class="budget-display">¥2,000,000</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 40%"></div>
+                                </div>
+                                <div class="progress-text">40% 消化</div>
+                            </td>
+                            <td>2025/07 〜 2025/12</td>
+                            <td><span class="status-badge active">進行中</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PRJ003</td>
+                            <td>社内研修プログラム</td>
+                            <td>人事部</td>
+                            <td class="budget-display">¥800,000</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                                <div class="progress-text">100% 消化</div>
+                            </td>
+                            <td>2025/01 〜 2025/06</td>
+                            <td><span class="status-badge completed">完了</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PRJ004</td>
+                            <td>クラウド移行プロジェクト</td>
+                            <td>開発部</td>
+                            <td class="budget-display">¥3,500,000</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 25%"></div>
+                                </div>
+                                <div class="progress-text">25% 消化</div>
+                            </td>
+                            <td>2025/10 〜 2026/09</td>
+                            <td><span class="status-badge active">進行中</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PRJ005</td>
+                            <td>顧客満足度向上施策</td>
+                            <td>営業部</td>
+                            <td class="budget-display">¥1,200,000</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <div class="progress-text">0% 消化</div>
+                            </td>
+                            <td>2026/01 〜 2026/06</td>
+                            <td><span class="status-badge inactive">休止中</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="addProjectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">プロジェクト追加</h2>
+            </div>
+            <form id="addProjectForm">
+                <div class="form-group">
+                    <label class="form-label required">プロジェクトコード</label>
+                    <input type="text" class="form-input" required placeholder="例: PRJ006">
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">プロジェクト名</label>
+                    <input type="text" class="form-input" required placeholder="例: 新規事業開発">
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">担当部署</label>
+                    <select class="form-select" required>
+                        <option value="">選択してください</option>
+                        <option value="sales">営業部</option>
+                        <option value="dev">開発部</option>
+                        <option value="hr">人事部</option>
+                        <option value="finance">経理部</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">予算</label>
+                    <input type="number" class="form-input" required placeholder="例: 1000000">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label required">開始日</label>
+                        <input type="date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">終了日</label>
+                        <input type="date" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">説明</label>
+                    <textarea class="form-textarea" placeholder="プロジェクトの概要"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-edit" onclick="closeAddModal()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">追加する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('addProjectModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addProjectModal').classList.remove('active');
+        }
+
+        document.getElementById('addProjectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('プロジェクトを追加しました');
+            closeAddModal();
+        });
+
+        document.getElementById('addProjectModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddModal();
+            }
+        });
+    </script>
+</body>
+</html>
+

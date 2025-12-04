@@ -102,4 +102,102 @@ public class CostsController {
 		model.addAttribute("currentPage", "new");
 		return "internal_cost/internal_cost_create";
 	}
+
+	/**
+	* 申請履歴画面表示処理（GET用）
+	*/
+	@GetMapping("/costs/history")
+	public String getCostHistory(HttpSession session, Model model) {
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
+		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "history");
+		return "internal_cost/application_history";
+	}
+
+	/**
+	* 承認一覧画面表示処理（GET用）
+	*/
+	@GetMapping("/costs/approval")
+	public String getCostApproval(HttpSession session, Model model) {
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
+		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "approval");
+		return "internal_cost/approval_list";
+	}
+
+	/**
+	* 会社情報管理マスタ画面表示処理（GET用）
+	*/
+	@GetMapping("/costs/company")
+	public String getCompanyMaster(HttpSession session, Model model) {
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
+		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "company");
+		return "internal_cost/company_master";
+	}
+
+	/**
+	* メンバーリスト管理マスタ画面表示処理（GET用）
+	*/
+	@GetMapping("/costs/member")
+	public String getMemberMaster(HttpSession session, Model model) {
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
+		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "member");
+		return "internal_cost/member_master";
+	}
+
+	/**
+	* 勘定科目管理マスタ画面表示処理（GET用）
+	*/
+	@GetMapping("/costs/account")
+	public String getAccountMaster(HttpSession session, Model model) {
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
+		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "account");
+		return "internal_cost/account_master";
+	}
+
+	/**
+	* 勘定科目サブカテゴリ管理マスタ画面表示処理（GET用）
+	*/
+	@GetMapping("/costs/account-subcategory")
+	public String getAccountSubcategoryMaster(HttpSession session, Model model) {
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
+		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "account-subcategory");
+		return "internal_cost/account_subcategory_master";
+	}
+
+	/**
+	* プロジェクト管理マスタ画面表示処理（GET用）
+	*/
+	@GetMapping("/costs/project")
+	public String getProjectMaster(HttpSession session, Model model) {
+		UserDto loginUser = (UserDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/index";
+		}
+		model.addAttribute("user", loginUser);
+		model.addAttribute("currentPage", "project");
+		return "internal_cost/project_master";
+	}
 }

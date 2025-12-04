@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勘定科目サブカテゴリ管理マスタ - 経費精算システム</title>
+    <link rel="stylesheet" th:href="@{/css/internal_cost/internal_cost.css}">
+    <style>
+        .master-container {
+            background: var(--bg-content);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 32px;
+        }
+
+        .master-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .master-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-area {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #0052D4;
+        }
+
+        .search-input {
+            padding: 8px 12px 8px 36px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 250px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23636E72' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 10px center;
+            background-size: 18px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead th {
+            background: #F8FAFC;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid #EEF2F7;
+        }
+
+        .data-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.inactive {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .parent-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #EBF5FF;
+            color: #0052D4;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0052D4, #4364F7);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.35);
+        }
+
+        .btn-edit {
+            background: #EEF2F7;
+            color: var(--text-primary);
+        }
+
+        .btn-edit:hover {
+            background: #E2E8F0;
+        }
+
+        .btn-delete {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .btn-delete:hover {
+            background: #FECACA;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #EEF2F7;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: " *";
+            color: #E17055;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #0052D4;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
+
+        <main class="main-content">
+            <div class="master-container">
+                <div class="master-header">
+                    <h1 class="master-title">勘定科目サブカテゴリ管理マスタ</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <span>➕</span>
+                            <span>サブカテゴリ追加</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-area">
+                    <div class="filter-group">
+                        <span class="filter-label">勘定科目:</span>
+                        <select class="filter-select">
+                            <option value="">すべて</option>
+                            <option value="travel">旅費交通費</option>
+                            <option value="communication">通信費</option>
+                            <option value="supplies">消耗品費</option>
+                            <option value="meeting">会議費</option>
+                            <option value="entertainment">接待交際費</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <input type="text" class="search-input" placeholder="サブカテゴリ名で検索">
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>コード</th>
+                            <th>サブカテゴリ名</th>
+                            <th>親カテゴリ</th>
+                            <th>説明</th>
+                            <th>ステータス</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SUB001</td>
+                            <td>常駐先への交通費</td>
+                            <td><span class="parent-badge">旅費交通費</span></td>
+                            <td>クライアント承認済みの常駐先への交通費</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SUB002</td>
+                            <td>出張交通費</td>
+                            <td><span class="parent-badge">旅費交通費</span></td>
+                            <td>出張時の交通費</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SUB003</td>
+                            <td>定期代</td>
+                            <td><span class="parent-badge">旅費交通費</span></td>
+                            <td>通勤定期券の費用</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SUB004</td>
+                            <td>タクシー代</td>
+                            <td><span class="parent-badge">旅費交通費</span></td>
+                            <td>業務上必要なタクシー利用費</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SUB005</td>
+                            <td>携帯電話料金</td>
+                            <td><span class="parent-badge">通信費</span></td>
+                            <td>業務用携帯電話の利用料金</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SUB006</td>
+                            <td>事務用品</td>
+                            <td><span class="parent-badge">消耗品費</span></td>
+                            <td>文房具、オフィス用品等</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SUB007</td>
+                            <td>社内会議</td>
+                            <td><span class="parent-badge">会議費</span></td>
+                            <td>社内での会議に関する費用</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SUB008</td>
+                            <td>接待飲食</td>
+                            <td><span class="parent-badge">接待交際費</span></td>
+                            <td>取引先との接待飲食費用</td>
+                            <td><span class="status-badge inactive">無効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="addSubcategoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">サブカテゴリ追加</h2>
+            </div>
+            <form id="addSubcategoryForm">
+                <div class="form-group">
+                    <label class="form-label required">サブカテゴリコード</label>
+                    <input type="text" class="form-input" required placeholder="例: SUB009">
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">サブカテゴリ名</label>
+                    <input type="text" class="form-input" required placeholder="例: 宿泊費">
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">親カテゴリ</label>
+                    <select class="form-select" required>
+                        <option value="">選択してください</option>
+                        <option value="travel">旅費交通費</option>
+                        <option value="communication">通信費</option>
+                        <option value="supplies">消耗品費</option>
+                        <option value="meeting">会議費</option>
+                        <option value="entertainment">接待交際費</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">説明</label>
+                    <textarea class="form-textarea" placeholder="このサブカテゴリの説明"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ステータス</label>
+                    <select class="form-select">
+                        <option value="active">有効</option>
+                        <option value="inactive">無効</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-edit" onclick="closeAddModal()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">追加する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('addSubcategoryModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addSubcategoryModal').classList.remove('active');
+        }
+
+        document.getElementById('addSubcategoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('サブカテゴリを追加しました');
+            closeAddModal();
+        });
+
+        document.getElementById('addSubcategoryModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddModal();
+            }
+        });
+    </script>
+</body>
+</html>
+

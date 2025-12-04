@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勘定科目管理マスタ - 経費精算システム</title>
+    <link rel="stylesheet" th:href="@{/css/internal_cost/internal_cost.css}">
+    <style>
+        /* マスタ管理画面用スタイル */
+        .master-container {
+            background: var(--bg-content);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 32px;
+        }
+
+        .master-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .master-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* 検索エリア */
+        .filter-area {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 8px 12px 8px 36px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 300px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23636E72' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 10px center;
+            background-size: 18px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #0052D4;
+        }
+
+        /* テーブル */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead th {
+            background: #F8FAFC;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid #EEF2F7;
+        }
+
+        .data-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+        /* ステータスバッジ */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.inactive {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        /* アイコンバッジ */
+        .icon-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #EBF5FF;
+            font-size: 18px;
+        }
+
+        /* アクションボタン */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0052D4, #4364F7);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-edit {
+            background: #EEF2F7;
+            color: var(--text-primary);
+        }
+
+        .btn-edit:hover {
+            background: #E2E8F0;
+        }
+
+        .btn-delete {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .btn-delete:hover {
+            background: #FECACA;
+        }
+
+        /* 説明テキスト */
+        .description-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* モーダル */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #EEF2F7;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: " *";
+            color: #E17055;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #0052D4;
+            box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* アイコン選択 */
+        .icon-selector {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            padding: 12px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+        }
+
+        .icon-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .icon-option:hover {
+            background: #EBF5FF;
+        }
+
+        .icon-option.selected {
+            border-color: #0052D4;
+            background: #EBF5FF;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ナビゲーションサイドバー -->
+        <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="master-container">
+                <div class="master-header">
+                    <h1 class="master-title">勘定科目管理マスタ</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <span>➕</span>
+                            <span>勘定科目追加</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 検索 -->
+                <div class="filter-area">
+                    <input type="text" class="search-input" placeholder="勘定科目名で検索">
+                </div>
+
+                <!-- 勘定科目テーブル -->
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>コード</th>
+                            <th>アイコン</th>
+                            <th>勘定科目名</th>
+                            <th>説明</th>
+                            <th>サブカテゴリ数</th>
+                            <th>ステータス</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ACC001</td>
+                            <td><span class="icon-badge">🚃</span></td>
+                            <td>旅費交通費</td>
+                            <td class="description-text">従業員が業務のために通常の勤務地を離れて移動する際に発生する費用</td>
+                            <td>4</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ACC002</td>
+                            <td><span class="icon-badge">📱</span></td>
+                            <td>通信費</td>
+                            <td class="description-text">業務で使用する電話、インターネット、郵便などの通信にかかる費用</td>
+                            <td>3</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ACC003</td>
+                            <td><span class="icon-badge">📦</span></td>
+                            <td>消耗品費</td>
+                            <td class="description-text">事務用品、文房具、備品など、短期間で消費される物品の購入費用</td>
+                            <td>3</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ACC004</td>
+                            <td><span class="icon-badge">☕</span></td>
+                            <td>会議費</td>
+                            <td class="description-text">社内外の会議で発生する飲食代、会場費などの費用</td>
+                            <td>3</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ACC005</td>
+                            <td><span class="icon-badge">🍽️</span></td>
+                            <td>接待交際費</td>
+                            <td class="description-text">取引先や顧客との接待、贈答品などにかかる費用</td>
+                            <td>3</td>
+                            <td><span class="status-badge active">有効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ACC006</td>
+                            <td><span class="icon-badge">📚</span></td>
+                            <td>図書研修費</td>
+                            <td class="description-text">書籍購入、セミナー参加費、資格取得費用など</td>
+                            <td>2</td>
+                            <td><span class="status-badge inactive">無効</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-edit">編集</button>
+                                    <button class="btn btn-delete">削除</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- 勘定科目追加モーダル -->
+    <div class="modal-overlay" id="addAccountModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">勘定科目追加</h2>
+            </div>
+            <form id="addAccountForm">
+                <div class="form-group">
+                    <label class="form-label required">勘定科目コード</label>
+                    <input type="text" class="form-input" required placeholder="例: ACC007">
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">勘定科目名</label>
+                    <input type="text" class="form-input" required placeholder="例: 福利厚生費">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">アイコン</label>
+                    <div class="icon-selector">
+                        <div class="icon-option" data-icon="🚃">🚃</div>
+                        <div class="icon-option" data-icon="📱">📱</div>
+                        <div class="icon-option" data-icon="📦">📦</div>
+                        <div class="icon-option" data-icon="☕">☕</div>
+                        <div class="icon-option" data-icon="🍽️">🍽️</div>
+                        <div class="icon-option" data-icon="📚">📚</div>
+                        <div class="icon-option" data-icon="💻">💻</div>
+                        <div class="icon-option" data-icon="🏥">🏥</div>
+                        <div class="icon-option" data-icon="🎓">🎓</div>
+                        <div class="icon-option" data-icon="🔧">🔧</div>
+                        <div class="icon-option" data-icon="📝">📝</div>
+                        <div class="icon-option" data-icon="💡">💡</div>
+                    </div>
+                    <input type="hidden" id="selectedIcon" value="">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">説明</label>
+                    <textarea class="form-textarea" placeholder="この勘定科目の説明を入力してください"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ステータス</label>
+                    <select class="form-select">
+                        <option value="active">有効</option>
+                        <option value="inactive">無効</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-edit" onclick="closeAddModal()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">追加する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('addAccountModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addAccountModal').classList.remove('active');
+        }
+
+        // アイコン選択
+        document.querySelectorAll('.icon-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('selectedIcon').value = this.dataset.icon;
+            });
+        });
+
+        document.getElementById('addAccountForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // TODO: サーバーに送信
+            alert('勘定科目を追加しました');
+            closeAddModal();
+        });
+
+        // モーダル外クリックで閉じる
+        document.getElementById('addAccountModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddModal();
+            }
+        });
+    </script>
+</body>
+</html>
+

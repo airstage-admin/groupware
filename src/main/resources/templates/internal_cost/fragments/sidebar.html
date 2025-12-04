@@ -6,9 +6,9 @@
     <nav class="nav-sidebar" th:fragment="sidebar">
         <div class="nav-header">
             <div class="nav-logo">💼</div>
-            <div>
-                <div class="nav-title">グループウェア</div>
-                <div class="nav-subtitle">経費精算システム</div>
+            <div class="nav-header-text">
+                <a class="nav-title" th:href="@{/costs/list}">グループウェア</a>
+                <a class="nav-subtitle" th:href="@{/costs/list}">経費精算システム</a>
             </div>
         </div>
 
@@ -28,53 +28,47 @@
                 </a>
             </div>
 
-            <!-- 過去の申請一覧 -->
+            <!-- 申請管理 -->
             <div class="nav-section">
-                <div class="nav-section-title">過去の申請</div>
+                <div class="nav-section-title">申請管理</div>
 
                 <a class="nav-item" th:classappend="${currentPage == 'history'} ? 'active' : ''" th:href="@{/costs/history}">
-                    <span class="nav-item-icon">✅</span>
+                    <span class="nav-item-icon">📋</span>
                     <span class="nav-item-text">申請履歴</span>
-                    <span class="nav-item-badge">3</span>
+                </a>
+
+                <a class="nav-item" th:classappend="${currentPage == 'approval'} ? 'active' : ''" th:href="@{/costs/approval}">
+                    <span class="nav-item-icon">✅</span>
+                    <span class="nav-item-text">承認一覧</span>
                 </a>
             </div>
 
-            <!-- 承認一覧画面 -->
+            <!-- マスタ管理 -->
             <div class="nav-section">
-                <div class="nav-section-title">承認一覧画面</div>
+                <div class="nav-section-title">マスタ管理</div>
 
-                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''"　th:href="@{/costs/new}">
-                    <span class="nav-item-icon">➕</span>
-                    <span class="nav-item-text">承認一覧画面</span>
-                </a>
-            </div>
-
-            <!-- 管理画面 -->
-            <div class="nav-section">
-                <div class="nav-section-title">管理画面</div>
-
-                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
-                    <span class="nav-item-icon">🏠</span>
-                    <span class="nav-item-text">会社情報管理画マスタ</span>
+                <a class="nav-item" th:classappend="${currentPage == 'company'} ? 'active' : ''" th:href="@{/costs/company}">
+                    <span class="nav-item-icon">🏢</span>
+                    <span class="nav-item-text">会社情報管理マスタ</span>
                 </a>
 
-                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
-                    <span class="nav-item-icon">🏠</span>
+                <a class="nav-item" th:classappend="${currentPage == 'member'} ? 'active' : ''" th:href="@{/costs/member}">
+                    <span class="nav-item-icon">👥</span>
                     <span class="nav-item-text">メンバーリスト管理マスタ</span>
                 </a>
 
-                 <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
-                    <span class="nav-item-icon">🏠</span>
+                <a class="nav-item" th:classappend="${currentPage == 'account'} ? 'active' : ''" th:href="@{/costs/account}">
+                    <span class="nav-item-icon">📊</span>
                     <span class="nav-item-text">勘定科目管理マスタ</span>
                 </a>
 
-                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
-                    <span class="nav-item-icon">🏠</span>
+                <a class="nav-item" th:classappend="${currentPage == 'account-subcategory'} ? 'active' : ''" th:href="@{/costs/account-subcategory}">
+                    <span class="nav-item-icon">📂</span>
                     <span class="nav-item-text">勘定科目サブカテゴリ管理マスタ</span>
                 </a>
 
-                <a class="nav-item" th:classappend="${currentPage == 'new'} ? 'active' : ''" th:href="@{/costs/list}">
-                    <span class="nav-item-icon">🏠</span>
+                <a class="nav-item" th:classappend="${currentPage == 'project'} ? 'active' : ''" th:href="@{/costs/project}">
+                    <span class="nav-item-icon">📁</span>
                     <span class="nav-item-text">プロジェクト管理マスタ</span>
                 </a>
             </div>
@@ -82,7 +76,7 @@
 
         <!-- ユーザー情報 -->
         <div class="nav-footer">
-            <a th:href="@{/userflow/home}" class="nav-user" style="text-decoration: none; color: inherit;">
+            <a th:href="@{/userflow/home}" class="nav-user">
                 <div class="nav-user-avatar" th:text="${user != null and user.username != null ? #strings.substring(user.username, 0, 1) : 'U'}">U</div>
                 <div class="nav-user-info">
                     <div class="nav-user-name" th:text="${user != null and user.username != null ? user.username : 'ユーザー'}">ユーザー名</div>

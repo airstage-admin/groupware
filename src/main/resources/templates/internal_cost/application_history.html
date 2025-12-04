@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>申請履歴 - 経費精算システム</title>
+    <link rel="stylesheet" th:href="@{/css/internal_cost/internal_cost.css}">
+    <style>
+        /* 申請履歴画面用スタイル */
+        .list-container {
+            background: var(--bg-content);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 32px;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .list-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* フィルターエリア */
+        .filter-area {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .filter-select,
+        .filter-input {
+            padding: 8px 12px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 150px;
+        }
+
+        .filter-select:focus,
+        .filter-input:focus {
+            outline: none;
+            border-color: #0052D4;
+        }
+
+        /* テーブル */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead th {
+            background: #F8FAFC;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid #EEF2F7;
+        }
+
+        .data-table tbody tr {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background: #EBF5FF;
+        }
+
+        /* ステータスバッジ */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-badge.approved {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .status-badge.draft {
+            background: #E2E8F0;
+            color: #64748B;
+        }
+
+        /* ボタン */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0052D4, #4364F7);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #EEF2F7;
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #E2E8F0;
+        }
+
+        /* ページネーション */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .pagination-btn {
+            padding: 8px 14px;
+            border: 2px solid #EEF2F7;
+            border-radius: 6px;
+            background: white;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover {
+            border-color: #0052D4;
+            color: #0052D4;
+        }
+
+        .pagination-btn.active {
+            background: #0052D4;
+            border-color: #0052D4;
+            color: white;
+        }
+
+        /* サマリーカード */
+        .summary-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: #F8FAFC;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .summary-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .summary-card.total .summary-value {
+            color: #0052D4;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ナビゲーションサイドバー -->
+        <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="list-container">
+                <div class="list-header">
+                    <h1 class="list-title">申請履歴</h1>
+                    <div class="header-actions">
+                        <a class="btn btn-primary" th:href="@{/costs/new}">
+                            <span>➕</span>
+                            <span>新規申請</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- サマリー -->
+                <div class="summary-row">
+                    <div class="summary-card total">
+                        <div class="summary-label">今月の申請総額</div>
+                        <div class="summary-value">¥52,160</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">申請件数</div>
+                        <div class="summary-value">8件</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">承認済み</div>
+                        <div class="summary-value">5件</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">審査中</div>
+                        <div class="summary-value">3件</div>
+                    </div>
+                </div>
+
+                <!-- フィルター -->
+                <div class="filter-area">
+                    <div class="filter-group">
+                        <span class="filter-label">ステータス:</span>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="">すべて</option>
+                            <option value="pending">承認待ち</option>
+                            <option value="approved">承認済み</option>
+                            <option value="rejected">差し戻し</option>
+                            <option value="draft">下書き</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">勘定科目:</span>
+                        <select class="filter-select" id="categoryFilter">
+                            <option value="">すべて</option>
+                            <option value="travel">旅費交通費</option>
+                            <option value="communication">通信費</option>
+                            <option value="supplies">消耗品費</option>
+                            <option value="meeting">会議費</option>
+                            <option value="entertainment">接待交際費</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">期間:</span>
+                        <input type="date" class="filter-input">
+                        <span>〜</span>
+                        <input type="date" class="filter-input">
+                    </div>
+                </div>
+
+                <!-- 申請履歴テーブル -->
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>申請日</th>
+                            <th>申請ID</th>
+                            <th>勘定科目</th>
+                            <th>サブカテゴリ</th>
+                            <th>金額</th>
+                            <th>購入日</th>
+                            <th>ステータス</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                            <td>2025/12/04</td>
+                            <td>FY2512040A01</td>
+                            <td>旅費交通費</td>
+                            <td>常駐先への交通費</td>
+                            <td>¥620</td>
+                            <td>2025/12/03</td>
+                            <td><span class="status-badge pending">承認待ち</span></td>
+                        </tr>
+                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                            <td>2025/12/02</td>
+                            <td>FY2512020A02</td>
+                            <td>消耗品費</td>
+                            <td>事務用品</td>
+                            <td>¥3,280</td>
+                            <td>2025/12/01</td>
+                            <td><span class="status-badge approved">承認済み</span></td>
+                        </tr>
+                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                            <td>2025/11/28</td>
+                            <td>FY2511280A03</td>
+                            <td>会議費</td>
+                            <td>社外会議</td>
+                            <td>¥8,500</td>
+                            <td>2025/11/27</td>
+                            <td><span class="status-badge approved">承認済み</span></td>
+                        </tr>
+                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                            <td>2025/11/25</td>
+                            <td>FY2511250A04</td>
+                            <td>通信費</td>
+                            <td>携帯電話料金</td>
+                            <td>¥2,980</td>
+                            <td>2025/11/20</td>
+                            <td><span class="status-badge rejected">差し戻し</span></td>
+                        </tr>
+                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                            <td>2025/11/20</td>
+                            <td>FY2511200A05</td>
+                            <td>旅費交通費</td>
+                            <td>出張交通費</td>
+                            <td>¥15,400</td>
+                            <td>2025/11/18</td>
+                            <td><span class="status-badge approved">承認済み</span></td>
+                        </tr>
+                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                            <td>2025/11/15</td>
+                            <td>FY2511150A06</td>
+                            <td>接待交際費</td>
+                            <td>接待飲食</td>
+                            <td>¥18,500</td>
+                            <td>2025/11/14</td>
+                            <td><span class="status-badge approved">承認済み</span></td>
+                        </tr>
+                        <tr th:onclick="'window.location.href=\'' + @{/costs/detail} + '\''">
+                            <td>2025/11/10</td>
+                            <td>FY2511100A07</td>
+                            <td>旅費交通費</td>
+                            <td>タクシー代</td>
+                            <td>¥2,400</td>
+                            <td>2025/11/09</td>
+                            <td><span class="status-badge approved">承認済み</span></td>
+                        </tr>
+                        <tr>
+                            <td>2025/11/08</td>
+                            <td>FY2511080A08</td>
+                            <td>消耗品費</td>
+                            <td>備品</td>
+                            <td>¥480</td>
+                            <td>—</td>
+                            <td><span class="status-badge draft">下書き</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- ページネーション -->
+                <div class="pagination">
+                    <button class="pagination-btn">«</button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">»</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

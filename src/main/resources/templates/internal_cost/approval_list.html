@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>承認一覧 - 経費精算システム</title>
+    <link rel="stylesheet" th:href="@{/css/internal_cost/internal_cost.css}">
+    <style>
+        /* 承認一覧画面用スタイル */
+        .list-container {
+            background: var(--bg-content);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            padding: 32px;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .list-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* フィルターエリア */
+        .filter-area {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .filter-select,
+        .filter-input {
+            padding: 8px 12px;
+            border: 2px solid #EEF2F7;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 150px;
+        }
+
+        .filter-select:focus,
+        .filter-input:focus {
+            outline: none;
+            border-color: #0052D4;
+        }
+
+        /* テーブル */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead th {
+            background: #F8FAFC;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid #EEF2F7;
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid #EEF2F7;
+        }
+
+        .data-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+        /* ステータスバッジ */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-badge.approved {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        /* アクションボタン */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-approve {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+        }
+
+        .btn-reject {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #DC2626;
+        }
+
+        .btn-detail {
+            background: #EEF2F7;
+            color: var(--text-primary);
+        }
+
+        .btn-detail:hover {
+            background: #E2E8F0;
+        }
+
+        /* ページネーション */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .pagination-btn {
+            padding: 8px 14px;
+            border: 2px solid #EEF2F7;
+            border-radius: 6px;
+            background: white;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover {
+            border-color: #0052D4;
+            color: #0052D4;
+        }
+
+        .pagination-btn.active {
+            background: #0052D4;
+            border-color: #0052D4;
+            color: white;
+        }
+
+        /* 統計カード */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #F8FAFC;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0052D4;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .stat-card.pending .stat-number {
+            color: #F59E0B;
+        }
+
+        .stat-card.approved .stat-number {
+            color: #10B981;
+        }
+
+        .stat-card.rejected .stat-number {
+            color: #EF4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ナビゲーションサイドバー -->
+        <div th:replace="~{internal_cost/fragments/sidebar :: sidebar}"></div>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="list-container">
+                <div class="list-header">
+                    <h1 class="list-title">承認一覧</h1>
+                </div>
+
+                <!-- 統計カード -->
+                <div class="stats-row">
+                    <div class="stat-card pending">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">承認待ち</div>
+                    </div>
+                    <div class="stat-card approved">
+                        <div class="stat-number">23</div>
+                        <div class="stat-label">承認済み</div>
+                    </div>
+                    <div class="stat-card rejected">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">差し戻し</div>
+                    </div>
+                </div>
+
+                <!-- フィルター -->
+                <div class="filter-area">
+                    <div class="filter-group">
+                        <span class="filter-label">ステータス:</span>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="">すべて</option>
+                            <option value="pending" selected>承認待ち</option>
+                            <option value="approved">承認済み</option>
+                            <option value="rejected">差し戻し</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">申請者:</span>
+                        <input type="text" class="filter-input" placeholder="氏名で検索">
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">期間:</span>
+                        <input type="date" class="filter-input">
+                        <span>〜</span>
+                        <input type="date" class="filter-input">
+                    </div>
+                </div>
+
+                <!-- 承認一覧テーブル -->
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>申請日</th>
+                            <th>申請ID</th>
+                            <th>申請者</th>
+                            <th>勘定科目</th>
+                            <th>金額</th>
+                            <th>ステータス</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025/12/04</td>
+                            <td>FY2512040A01</td>
+                            <td>山田 太郎</td>
+                            <td>旅費交通費</td>
+                            <td>¥3,200</td>
+                            <td><span class="status-badge pending">承認待ち</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-approve">承認</button>
+                                    <button class="btn btn-reject">差戻</button>
+                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025/12/03</td>
+                            <td>FY2512030A02</td>
+                            <td>佐藤 花子</td>
+                            <td>消耗品費</td>
+                            <td>¥5,480</td>
+                            <td><span class="status-badge pending">承認待ち</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-approve">承認</button>
+                                    <button class="btn btn-reject">差戻</button>
+                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025/12/02</td>
+                            <td>FY2512020A03</td>
+                            <td>鈴木 一郎</td>
+                            <td>会議費</td>
+                            <td>¥12,000</td>
+                            <td><span class="status-badge pending">承認待ち</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-approve">承認</button>
+                                    <button class="btn btn-reject">差戻</button>
+                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025/12/01</td>
+                            <td>FY2512010A04</td>
+                            <td>田中 美咲</td>
+                            <td>接待交際費</td>
+                            <td>¥28,500</td>
+                            <td><span class="status-badge pending">承認待ち</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-approve">承認</button>
+                                    <button class="btn btn-reject">差戻</button>
+                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025/11/30</td>
+                            <td>FY2511300A05</td>
+                            <td>高橋 健太</td>
+                            <td>通信費</td>
+                            <td>¥2,980</td>
+                            <td><span class="status-badge pending">承認待ち</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-approve">承認</button>
+                                    <button class="btn btn-reject">差戻</button>
+                                    <a class="btn btn-detail" th:href="@{/costs/detail}">詳細</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- ページネーション -->
+                <div class="pagination">
+                    <button class="pagination-btn">«</button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">»</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

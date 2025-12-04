@@ -109,16 +109,35 @@ html, body {
     font-weight: bold;
 }
 
+.nav-header-text {
+    display: flex;
+    flex-direction: column;
+}
+
 .nav-title {
     font-size: 18px;
     font-weight: 600;
     letter-spacing: 0.5px;
+    color: var(--text-nav);
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+}
+
+.nav-title:hover {
+    opacity: 0.85;
 }
 
 .nav-subtitle {
     font-size: 11px;
     color: var(--text-nav-secondary);
     margin-top: 2px;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+}
+
+.nav-subtitle:hover {
+    opacity: 0.85;
+    color: var(--text-nav);
 }
 
 /* Navigation Menu */
@@ -201,10 +220,17 @@ html, body {
     padding: 8px;
     border-radius: 10px;
     transition: background var(--transition-fast);
+    text-decoration: none;
+    color: inherit;
 }
 
 .nav-user:hover {
     background: var(--bg-hover);
+}
+
+/* アクティブ状態のナビアイテムはホバー時も動かない */
+.nav-item.active:hover {
+    transform: none;
 }
 
 .nav-user-avatar {
