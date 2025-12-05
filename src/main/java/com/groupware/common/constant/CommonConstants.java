@@ -25,14 +25,15 @@ public final class CommonConstants {
 	public static final String CYCLE_YEAR = "2000";
 	
 	// 正規表現
-	public static final String CLOCK_REGEX = "^([0-2]?[0-9]|3[0-6]):[0-5][0-9]$"; // 勤怠時間正規表現（0:00～36:00)
-	public static final String BREAK_REGEX = "^(([0-1]?[0-9]):(00|15|30|45))|10:00$"; // 休憩時間正規表現（0:00～9:45, 15分刻み)
+	public static final String CLOCK_REGEX = "^([0-2]?[0-9]|3[0-1]):[0-5][0-9]$"; // 勤怠時間正規表現（0:00～31:59)
 	public static final String EMPLOYEE_NUMBER = "\\d{3}"; // 社員番号（半角数字3桁）
 	public static final String MAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"; // メールアドレス正規表現
 	public static final String ID_PASS_REGEX = "^[a-zA-Z0-9._\\-!@]+$"; // ログインID、パスワード（半角英数字と記号（._-!@））
 	public static final String NAME_REGEX = "^[ぁ-んァ-ヶ一-龥Ａ-Ｚａ-ｚ]+$"; // 名前（全角・スペース禁止）
 	public static final String DATE_REGEX = "^[0-9]{4}/(0?[1-9]|1[0-2])/(0?[1-9]|[12][0-9]|3[01])$"; // 入社日（YYYY/MM/DD）月日のゼロ埋め省略可（4/1等もOK）
-
+	public static final String BREAK_RANGE_REGEX = "^$|^(0?[0-9]:[0-5][0-9]|10:00)$"; //休憩時間正規表現　範囲チェック用： （0:00～10:00) 
+	public static final String BREAK_INTERVAL_REGEX = "^$|^.*:(00|15|30|45)$"; //休憩時間・深夜休憩時間　共通正規表現　15分刻みチェック用： (末尾が :00, :15, :30, :45 のみ許可)
+	public static final String NIGHT_BREAK_RANGE_REGEX = "^$|^(0?[0-6]:[0-5][0-9]|0?7:00)$"; // 深夜休憩時間正規表現　範囲チェック用：（0:00～7:00）
 	
 	//文字数
 	public static final int LOGIN_ID_MIN_LENGTH = 4; //ログインID最小文字数
@@ -41,6 +42,7 @@ public final class CommonConstants {
     public static final int PASSWORD_MAX_LENGTH = 100; //パスワード最大文字数
     public static final int NAME_MAX_LENGTH = 128; //氏名最大文字数
     public static final int MAIL_MAX_LENGTH = 254; //メールアドレス最大文字数
+    public static final int PLACE_WORK_NAME_MAX_LENGTH = 256; //勤務場所名最大文字数
     
 	
 	// SQL演算子
@@ -50,6 +52,11 @@ public final class CommonConstants {
 	public static final String JUDGE_LT = "<";
 	public static final String JUDGE_LE = "<=";
 
+	
+	// 深夜勤務時間（分換算） 
+    public static final int NIGHT_START_MIN = 22 * 60; // 22:00 = 1320分
+    public static final int NIGHT_END_MIN = 29 * 60; // 29:00 (翌5:00) = 1740分
+    
 	// 共通
 	public static final String WEEK_NAME = "E"; // 略語 の曜日名
 	public static final String KORON = "："; // 項目値後尾
@@ -63,7 +70,7 @@ public final class CommonConstants {
 	public static final String HYPHEN_FORMAT = "-"; // 日付フォーマット変換用
 	
 	public static final int UNSELECTED_CODE = 0; // 部署未選択コード
-	
+
 	// バッチ名称
 	public static final String ATTENDANCE_CREATE_BATCH = "AttendanceCreateBatch"; // 勤怠管理簿作成処理バッチ
 	public static final String PAID_ACQUISITION_BATCH = "PaidAcquisitionBatch"; // 有給取得処理バッチ

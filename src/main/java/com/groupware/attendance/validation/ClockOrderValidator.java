@@ -7,7 +7,7 @@ import com.groupware.attendance.form.AttendanceForm;
 
 public class ClockOrderValidator implements ConstraintValidator<ClockOrderCheck, AttendanceForm> {
 
-	// 時刻文字列 (例: "9:00", "31:00") を分単位の数値に変換するユーティリティ関数
+	// 時刻文字列を分単位の数値に変換するユーティリティ関数
 	private long timeToMinutes(String timeStr) {
 		if (timeStr == null || !timeStr.matches("^([0-2]?[0-9]|3[0-1]):[0-5][0-9]$")) {
 			return -1; // 不正な時刻は比較をスキップ
@@ -33,7 +33,7 @@ public class ClockOrderValidator implements ConstraintValidator<ClockOrderCheck,
 			return true;
 		}
 
-		boolean isValid = clockInMinutes <= clockOutMinutes;
+		boolean isValid = clockInMinutes < clockOutMinutes;
 
 		if (!isValid) {
 			// エラーをクラス全体ではなく、clockOut フィールドに結びつける

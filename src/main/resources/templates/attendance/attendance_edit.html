@@ -31,11 +31,11 @@
 		<span th:if="${#fields.hasErrors('clockOut')}" th:errors="*{clockOut}" style="color:red;"></span><br>
 
 		<label style="color:red;">*</label><label for="breakTime">休憩時間：</label>
-		<input type="text" id="breakTime" name="breakTime" th:field="*{breakTime}" size="4" maxlength="5" required />&ensp;&ensp;※00:00～10:00。15分単位<br>
+		<input type="text" id="breakTime" name="breakTime" th:field="*{breakTime}" size="4" maxlength="5" required />&ensp;&ensp;※15分単位<br>
 		<span th:if="${#fields.hasErrors('breakTime')}" th:errors="*{breakTime}" style="color:red;"></span><br>
 
-		<label style="color:red;">*</label><label for="nightBreakTime">深夜休憩時間：</label>
-		<input type="text" id="nightBreakTime" name="nightBreakTime" th:field="*{nightBreakTime}" maxlength="5" size="4" required　/>&ensp;&ensp;※00:00～10:00。15分単位。22：00～29：00の間は深夜休憩時間に記載してください。<br>
+		<label for="nightBreakTime">深夜休憩時間：</label>
+		<input type="text" id="nightBreakTime" name="nightBreakTime" th:field="*{nightBreakTime}" maxlength="5" size="4"　/>&ensp;&ensp;※15分単位。22:00～29:00の間は深夜休憩時間に記載してください。<br>
 		<span th:if="${#fields.hasErrors('nightBreakTime')}" th:errors="*{nightBreakTime}" style="color:red;"></span><br>
 
 		<label for="vacationCategory">勤怠/休暇区分：</label>
@@ -51,7 +51,9 @@
 		<label for="vacationNote">備考：</label>
 		<input type="text" id="vacationNote" th:field="*{vacationNote}" size="50" maxlength="100" /><br><br>
 		<button type="submit" name="action" value="cancel" formnovalidate>キャンセル</button>&ensp;&ensp;
-		<button type="submit" name="action" value="update">更　新</button>
+		<button type="submit" name="action" value="reset" formnovalidate 
+				onclick="return confirm('データを初期化更新して、よろしいですか？');">初期化</button>&ensp;&ensp;
+		<button type="submit" name="action" value="update">登録</button>
     </form>
 
     <p th:if="${error}" th:text="${error}" style="color:red;"></p>
