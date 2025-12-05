@@ -127,7 +127,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	public void update(AttendanceDto dto, int id) {
 		String sql = """
 				UPDATE attendance
-				   SET place_work = ?, place_work_name = ?, clock_in = ?, clock_out = ?, break_time = ?, night_break_time = ?,
+				   SET place_work_name = ?, clock_in = ?, clock_out = ?, break_time = ?, night_break_time = ?,
 				       vacation_category = ?, vacation_note = ?,
 				       updated_by = ?, updated_at = NOW()
 				 WHERE id = ?
@@ -135,7 +135,6 @@ public class AttendanceDaoImpl implements AttendanceDao {
 
 		try {
 			jdbcTemplate.update(sql,
-					dto.getPlaceWork(),
 					dto.getPlaceWorkName(),
 					dto.getClockIn(),
 					dto.getClockOut(),

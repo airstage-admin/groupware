@@ -52,6 +52,11 @@ public final class CommonConstants {
 	public static final String JUDGE_LT = "<";
 	public static final String JUDGE_LE = "<=";
 
+	
+	// 深夜勤務時間（分換算） 
+    public static final int NIGHT_START_MIN = 22 * 60; // 22:00 = 1320分
+    public static final int NIGHT_END_MIN = 29 * 60; // 29:00 (翌5:00) = 1740分
+    
 	// 共通
 	public static final String WEEK_NAME = "E"; // 略語 の曜日名
 	public static final String KORON = "："; // 項目値後尾
@@ -65,8 +70,6 @@ public final class CommonConstants {
 	public static final String HYPHEN_FORMAT = "-"; // 日付フォーマット変換用
 	
 	public static final int UNSELECTED_CODE = 0; // 部署未選択コード
-	public static final String PLACE_CODE_RESIDENT = "1"; // 常駐案件
-    public static final String PLACE_CODE_AS = "2";       // AS（本部勤務）
 
 	// バッチ名称
 	public static final String ATTENDANCE_CREATE_BATCH = "AttendanceCreateBatch"; // 勤怠管理簿作成処理バッチ

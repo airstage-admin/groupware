@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import com.groupware.attendance.form.AttendanceForm;
+import com.groupware.common.util.CommonUtils;
 
 /**
 * BreakTimeValidator
@@ -23,15 +24,15 @@ public class BreakTimeValidator implements ConstraintValidator<BreakTimeCheck, A
         String nightBreak = form.getNightBreakTime();
 
         //必要な値が空ならチェックしない
-        if (isEmpty(clockIn) || isEmpty(clockOut)) {
+        if (CommonUtils.isEmpty(clockIn) || CommonUtils.isEmpty(clockOut)) {
             return true;
         }
 
         //分に変換して計算
-        int inMin = toMinutes(clockIn);
-        int outMin = toMinutes(clockOut);
-        int breakMin = toMinutes(breakTime);      // 空なら0が返る想定
-        int nightBreakMin = toMinutes(nightBreak); // 空なら0が返る想定
+        int inMin = CommonUtils.toMinutes(clockIn);
+        int outMin = CommonUtils.toMinutes(clockOut);
+        int breakMin = CommonUtils.toMinutes(breakTime);
+        int nightBreakMin = CommonUtils.toMinutes(nightBreak);
 
         //勤務時間（退勤 - 出勤）
         int workDuration = outMin - inMin;
@@ -53,24 +54,6 @@ public class BreakTimeValidator implements ConstraintValidator<BreakTimeCheck, A
         }
 
         return true;
-    }
-
-    //空文字チェック用
-    private boolean isEmpty(String str) {
-        return str == null || str.isEmpty();
-    }
-
-    //"HH:mm" を "分" に変換するメソッド
-    private int toMinutes(String time) {
-        if (isEmpty(time)) return 0;
-        try {
-            String[] parts = time.split(":");
-            int h = Integer.parseInt(parts[0]);
-            int m = Integer.parseInt(parts[1]);
-            return h * 60 + m;
-        } catch (Exception e) {
-            return 0;
-        }
     }
 
 }

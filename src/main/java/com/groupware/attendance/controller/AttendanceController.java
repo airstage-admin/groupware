@@ -30,6 +30,7 @@ import com.groupware.common.model.PlaceCategory;
 import com.groupware.common.registry.DepartmentRegistry;
 import com.groupware.common.registry.PlaceCategoryRegistry;
 import com.groupware.common.registry.VacationCategoryRegistry;
+import com.groupware.common.util.CommonUtils;
 import com.groupware.dto.AttendanceDto;
 import com.groupware.dto.UserApprovalDto;
 import com.groupware.dto.UserDto;
@@ -239,11 +240,28 @@ public class AttendanceController {
 
 		// アノテーションによるエラーチェック
 		if (bindingResult.hasErrors()) {
-			// 勤務先区分データ取得
-			PlaceCategory pc = PlaceCategoryRegistry.fromCode(Integer.parseInt(attendanceForm.getPlaceWork()));
-			model.addAttribute("placeWork", pc.getCode());
-			model.addAttribute("placeChk", pc.getIsName());
-			model.addAttribute("placeWorkName", pc.getDisplayName() + CommonConstants.KORON);
+			//勤務先情報の再セット
+			int placeCode = CommonConstants.UNSELECTED_CODE;
+			try {
+				if (attendanceForm.getPlaceWork() != null && !attendanceForm.getPlaceWork().isEmpty()) {
+					placeCode = Integer.parseInt(attendanceForm.getPlaceWork());
+				}
+			} catch (NumberFormatException e) {
+				// 変換できない場合は未選択のまま
+			}
+
+			PlaceCategory pc = PlaceCategoryRegistry.fromCode(placeCode);
+			
+			// Registryから取得できた場合のみセット
+			if (pc != null) {
+				model.addAttribute("placeWork", pc.getCode());
+				model.addAttribute("placeChk", pc.getIsName());
+				model.addAttribute("placeWorkName", pc.getDisplayName() + CommonConstants.KORON);
+			}
+			
+			model.addAttribute("vacationCategoryMap", VacationCategoryRegistry.vacationCategorySelectSet());
+			model.addAttribute("user", loginUser);
+
 			return "/attendance/attendance_edit";
 		}
 
@@ -259,6 +277,7 @@ public class AttendanceController {
 			return "/attendance/attendance_edit";
 		}
 
+		model.addAttribute("vacationCategoryMap", VacationCategoryRegistry.vacationCategorySelectSet());
 		model.addAttribute("user", loginUser);
 		session.setAttribute("loginUser", loginUser);
 		return "redirect:/attendance_calendar";
@@ -320,7 +339,7 @@ public class AttendanceController {
 		dto.setId(form.getId());
 		dto.setUserId(form.getUserId());
 		
-		if (form.getPlaceWork() != null && !form.getPlaceWork().isEmpty()) {
+		if (CommonUtils.isNotEmpty(form.getPlaceWork())) {
 			dto.setPlaceWork(Integer.parseInt(form.getPlaceWork()));
 		} else {
 			dto.setPlaceWork(CommonConstants.UNSELECTED_CODE); // 値がない場合は 0 (未選択) をセット
@@ -342,7 +361,7 @@ public class AttendanceController {
 			dto.setNightBreakTime(LocalTime.parse(CommonConstants.INIT_TIME, formatter));
 		}
 		
-		if (form.getVacationCategory() != null && !form.getVacationCategory().isEmpty()) {
+		if (CommonUtils.isNotEmpty(form.getVacationCategory())) {
 			dto.setVacationCategory(Integer.parseInt(form.getVacationCategory()));
 		} else {
 			dto.setVacationCategory(CommonConstants.UNSELECTED_CODE); // 値がない場合は 0 (なし) をセット

@@ -4,16 +4,26 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import com.groupware.attendance.form.AttendanceForm;
+import com.groupware.common.constant.CommonConstants;
+import com.groupware.common.util.CommonUtils;
 
 /**
-* NightBreakValidator
-* 深夜休憩時間入力チェック実装クラス
-* 
-* @author　A.Watanabe
-* @version　1.0.0
-*/
+ * NightBreakValidator
+ * 深夜休憩時間入力チェック実装クラス
+ * 
+ * @author　A.Watanabe
+ * @version　1.0.0
+ */
 
 public class NightBreakValidator implements ConstraintValidator<NightBreakCheck, AttendanceForm> {
+	
+	/**
+	 * バリデーション実行処理
+	 * 
+	 * @param form チェック対象のフォーム（出勤・退勤・深夜休憩時間を含む）
+	 * @param context バリデーションコンテキスト
+	 * @return true:検証OK（または対象外）、false:検証NG
+	 */
 	@Override
 	public boolean isValid(AttendanceForm form, ConstraintValidatorContext context) {
 		String clockIn = form.getClockIn();	//出勤時刻
@@ -21,21 +31,21 @@ public class NightBreakValidator implements ConstraintValidator<NightBreakCheck,
 		String nightBreak = form.getNightBreakTime(); // 深夜休憩
 
 		//退勤時刻が空ならチェックしない
-		if (clockOut == null || clockOut.isEmpty()) {
+		if (CommonUtils.isEmpty(clockOut)) {
 			return true;
 		}
 
 		//--- 時間計算ロジック 分に変換 ---
-		int clockInMin = toMinutes(clockIn); //出勤
-		int clockOutMin = toMinutes(clockOut); //退勤 
-		int nightStartMin = 22 * 60; // 22:00 = 1320分
-		int nightEndMin = 29 * 60;   // 29:00 = 1740分
+		int clockInMin = CommonUtils.toMinutes(clockIn); //出勤
+		int clockOutMin = CommonUtils.toMinutes(clockOut); //退勤 
+		int nightStartMin = CommonConstants.NIGHT_START_MIN;  // 22:00 = 1320分
+		int nightEndMin = CommonConstants.NIGHT_END_MIN;   // 29:00 = 1740分
 
 		// 「退勤が22:00より後」 かつ 「出勤が29:00より前」 の場合のみ深夜勤務とする
 		boolean isLateNightWork = (clockOutMin > nightStartMin) && (clockInMin < nightEndMin);
 
 		//深夜休憩が入力されているか判定 (0:00や空文字以外か)
-		boolean hasNightBreakInput = (nightBreak != null && !nightBreak.isEmpty() && !nightBreak.equals("0:00"));
+		boolean hasNightBreakInput = CommonUtils.isNotEmpty(nightBreak) && !nightBreak.equals("0:00");
 
 		// --- チェック処理 ---
 
@@ -54,24 +64,17 @@ public class NightBreakValidator implements ConstraintValidator<NightBreakCheck,
 		return true;
 	}
 
-	// エラーメッセージを特定のフィールドに出すための処理
+	/**
+	 * エラーメッセージを設定する
+	 *
+	 * @param context バリデーションコンテキスト
+	 * @param message 表示するエラーメッセージ
+	 */
 	private void setErrorMessage(ConstraintValidatorContext context, String message) {
 		context.disableDefaultConstraintViolation();
 		context.buildConstraintViolationWithTemplate(message)
 		.addPropertyNode("nightBreakTime") 
 		.addConstraintViolation();
-	}
-
-	//"HH:mm" を "分" に変換するメソッド
-	private int toMinutes(String time) {
-		try {
-			String[] parts = time.split(":");
-			int h = Integer.parseInt(parts[0]);
-			int m = Integer.parseInt(parts[1]);
-			return h * 60 + m;
-		} catch (Exception e) {
-			return 0;
-		}
 	}
 
 }
