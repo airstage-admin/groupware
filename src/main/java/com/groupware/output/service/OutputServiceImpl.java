@@ -18,18 +18,30 @@ import com.groupware.dto.CellDataStructure;
 import com.groupware.dto.InternalPJDto;
 import com.groupware.output.form.OutputForm;
 
+/**
+ * OutputServiceImpl
+ * @author Tanaka
+ * @version 1.0.0
+ */
 @Service
 public class OutputServiceImpl implements OutputService {
 
-	//社内PJ
 	@Autowired
-	private InternalPJDao internalProjectWorkDao;
+	private InternalPJDao internalProjectWorkDao; //社内PJ
 
+	/**
+	 * 社内PJのExcel作成処理
+	 * 
+	 * @param form 出力フォーム
+	 * @return 処理結果メッセージ
+	 */
 	@Override
 	public String createInternalProjectExcel(OutputForm form) {
 
-		List<CellDataStructure> cellDataList = createCellDataForShainPJ(form);
+		//DBからデータを取得し、Excel出力用のデータリストを作成
+		List<CellDataStructure> cellDataList = createCellDataForInternalPJ(form);
 
+		//ファイル名を生成
 		String fileName = form.getTargetYearMonth() + " " + OutputCategory.INTERNAL_PJ.getLabel() + OutputConstants.EXTENSION_XLSX;
 
 		try {
@@ -43,12 +55,22 @@ public class OutputServiceImpl implements OutputService {
 		}
 	}
 
-	private List<CellDataStructure> createCellDataForShainPJ(OutputForm form) {
+	/**
+	 * 社内PJ用のExcelセルデータリスト作成
+	 * 
+	 * @param form 出力フォーム
+	 * @return セルデータリスト
+	 */
+
+	private List<CellDataStructure> createCellDataForInternalPJ(OutputForm form) {
 		List<CellDataStructure> list = new ArrayList<>();
 
+		//対象年月を取得
 		String targetMonth = form.getTargetYearMonth();
+		//DBから社内PJのデータを取得
 		List<InternalPJDto> dbList = internalProjectWorkDao.selectInternalProjectWorkTime(targetMonth);
 
+		//ヘッダー行を作成してリストに追加
 		String[] headers = OutputConstants.HEADER_INTERNAL_PJ;
 		IntStream.range(0, headers.length).forEach(i -> list.add(createHeaderCell(0, i, headers[i])));
 
@@ -56,17 +78,21 @@ public class OutputServiceImpl implements OutputService {
 				.filter(Objects::nonNull)
 				.toList();
 
+		//データ行を作成してリストに追加
 		IntStream.range(0, validList.size()).forEach(i -> {
 			InternalPJDto dto = validList.get(i);
 			int currentRow = i + 1; // 行番号は index + 1 (1行目はヘッダーのため)
 
+			//時間データの整形（末尾のゼロを除去）
 			String timeStr = OutputConstants.VAL_ZERO;
 			if (dto.getTotalHours() != null) {
 				timeStr = dto.getTotalHours().stripTrailingZeros().toPlainString();
 			}
 
+			//ユーザー名の取得（nullの場合は空文字）
 			String userName = (dto.getUsername() != null) ? dto.getUsername() : OutputConstants.VAL_EMPTY;
 
+			//各セルのデータ作成
 			list.add(createDataCell(currentRow, 0, userName));
 			list.add(createDataCell(currentRow, 1, timeStr));
 			list.add(createDataCell(currentRow, 2, OutputConstants.VAL_EMPTY));
@@ -77,7 +103,14 @@ public class OutputServiceImpl implements OutputService {
 		return list;
 	}
 
-	//ヘッダーセル
+	/**
+	 * ヘッダー項目のセル作成処理
+	 * 
+	 * @param row 行番号
+	 * @param col 列番号
+	 * @param value セル値
+	 * @return セルデータ
+	 */
 	private CellDataStructure createHeaderCell(int row, int col, String value) {
 		return new CellDataStructure(
 				row, col, false,
@@ -87,7 +120,14 @@ public class OutputServiceImpl implements OutputService {
 				FillPatternType.SOLID_FOREGROUND, value);
 	}
 
-	// データセル
+	/**
+	 * データ項目のセル作成処理
+	 * 
+	 * @param row 行番号
+	 * @param col 列番号
+	 * @param value セル値
+	 * @return セルデータ
+	 */
 	private CellDataStructure createDataCell(int row, int col, String value) {
 		return new CellDataStructure(
 				row, col, false,
