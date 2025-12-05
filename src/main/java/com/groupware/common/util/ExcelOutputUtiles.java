@@ -7,6 +7,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -109,6 +110,11 @@ public final class ExcelOutputUtiles {
 
 		style.setFillForegroundColor(data.getSolid());// セルの背景の塗りつぶしカラー
 		style.setFillPattern(data.getPattern()); // セルの背景の塗りつぶしパターン
+
+		style.setBorderTop(BorderStyle.THIN); // 上
+		style.setBorderBottom(BorderStyle.THIN); // 下
+		style.setBorderLeft(BorderStyle.THIN); // 左
+		style.setBorderRight(BorderStyle.THIN); // 右
 
 		return style;
 	}

@@ -111,6 +111,7 @@ public class OutputController {
 		logger.info("出力処理開始: 年月={}", form.getTargetYearMonth());
 
 		try {
+			String msg = ""; 
 
 			switch (form.getOutputItem()) {
 			case "attendance":
@@ -123,12 +124,14 @@ public class OutputController {
 
 			case "internal_pj":
 				form.setOutputItem("社内PJ");
-				String msg = outputService.createInternalProjectExcel(form);
+				msg = outputService.createInternalProjectExcel(form);
 				logger.info("出力完了: " + msg);
 				break;
 
 			case "study":
-				//ここに勉強会の出力ロジックを実装してください
+				form.setOutputItem("勉強会");
+				msg = outputService.createStudyExcel(form);
+				logger.info("出力完了: " + msg);
 				break;
 
 			default:

@@ -8,16 +8,16 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.groupware.dto.InternalPJDto;
+import com.groupware.dto.StudyDto;
 
 @Repository
-public class InternalPJDaoImpl implements InternalPJDao {
+public class StudyDaoImpl implements StudyDao {
 
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
-    public List<InternalPJDto> selectInternalProjectWorkTime(String targetMonth) {
+    public List<StudyDto> selectStudyTime(String targetMonth) {
         
         String sql = """
             SELECT 
@@ -39,7 +39,7 @@ public class InternalPJDaoImpl implements InternalPJDao {
                       AND a.delflg = 0 
                       AND a.clock_in IS NOT NULL AND a.clock_in != '00:00:00' 
                       AND a.clock_out IS NOT NULL AND a.clock_out != '00:00:00' 
-                      AND vacation_category = 18
+                      AND vacation_category = 19
                     GROUP BY a.user_id, a.working_day
                 ) AS T1
             ) AS T2 ON u.id = T2.user_id 
@@ -55,7 +55,7 @@ public class InternalPJDaoImpl implements InternalPJDao {
         return jdbcTemplate.query(
                 sql, 
                 params, 
-                new BeanPropertyRowMapper<>(InternalPJDto.class)
+                new BeanPropertyRowMapper<>(StudyDto.class)
         );
     }
 }

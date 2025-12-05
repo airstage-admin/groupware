@@ -14,8 +14,10 @@ public class OutputConstants {
     public static final String EXTENSION_XLSX = ".xlsx";
 
     // --- ヘッダー項目（社内PJ用） ---
-    // ※これはOutputCategoryには書けない情報なのでここに置くのが正解
     public static final String[] HEADER_INTERNAL_PJ = {"氏名", "社内PJ対応時間", "残業手当", "金額", "繰り上げ"};
+    
+ // --- ヘッダー項目（勉強会用） ---
+    public static final String[] HEADER_STUDY = {"氏名", "勉強会参加時間", "残業手当", "金額", "繰り上げ"};
 
     // --- スタイル設定 ---
     public static final short FONT_SIZE_DEFAULT = 10;
